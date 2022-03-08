@@ -84,21 +84,30 @@ export default function Home(props: any) {
       <S.EmployerContent> 
         <Text color="#414660" mx='8px' mb="24px" variant="h1">Dados da Empresa</Text>
         {
-          dataCompanies && (            
+          dataCompanies && (
+            <>      
+            <Text color="#414660" mx='8px' mb="8px" variant="h3">Nome da empresa</Text>
             <S.InputSelect onChange={onRequestCompany} value={selectedCompany}>
               <option selected={true} value={null}>Empresa não selecionada</option> 
               {dataCompanies.map(({ name, company_id}) => (            
                 <option value={company_id}>{name}</option> 
               ))}
             </S.InputSelect>
+            </>
           )
         }
         {
           dataCompany && (
             <S.EmployerContentInputs>
-              <S.Input disabled value={dataCompany[0].document} />
-              <S.Input disabled value={dataCompany[0].company_id}/>
-              <S.Input disabled value={dataCompany[0].address}/>
+              <S.InputLabel>
+                <Text color="#414660" mx='8px' mb="24px" variant="h3">Documento</Text>
+                <S.Input disabled value={dataCompany[0].document} />
+              </S.InputLabel>
+              {/* <S.Input disabled value={dataCompany[0].company_id}/> */}
+              <S.InputLabel>
+                <Text color="#414660" mx='8px' mb="24px" variant="h3">Endereço</Text>
+                <S.Input disabled value={dataCompany[0].address}/>
+              </S.InputLabel>
             </S.EmployerContentInputs>
           )
         }
@@ -118,7 +127,7 @@ export default function Home(props: any) {
     return (
       <S.ExcelComponent>
         <S.ExcelComponentLine>
-          {['Setor', 'Telefone', 'E-mail'].map((item) => (
+          {['Nome', 'Setor', 'Telefone', 'E-mail'].map((item) => (
             <S.ExcelExcelComponentItem style={{fontWeight: '700'}}> { item} </S.ExcelExcelComponentItem>
           ))}
         </S.ExcelComponentLine>
@@ -126,6 +135,7 @@ export default function Home(props: any) {
         {dataContacts?.length ? (
           dataContacts.map((item) => (
             <S.ExcelComponentLine style={{display: 'flex'}}>
+              <S.ExcelExcelComponentItem>{ item.name || 'Não informado' }</S.ExcelExcelComponentItem>
               <S.ExcelExcelComponentItem>{ item.function_service || 'Não informado' }</S.ExcelExcelComponentItem>
               <S.ExcelExcelComponentItem>{ item.phone || 'Não informado' }</S.ExcelExcelComponentItem>
               <S.ExcelExcelComponentItem>{ item.email || 'Não informado' }</S.ExcelExcelComponentItem>
@@ -133,6 +143,7 @@ export default function Home(props: any) {
           ))
         ): (
           <S.ExcelComponentLine style={{display: 'flex'}}>
+            <S.ExcelExcelComponentItem>Não informado</S.ExcelExcelComponentItem>
             <S.ExcelExcelComponentItem>Não informado</S.ExcelExcelComponentItem>
             <S.ExcelExcelComponentItem>Não informado</S.ExcelExcelComponentItem>
             <S.ExcelExcelComponentItem>Não informado</S.ExcelExcelComponentItem>
@@ -148,15 +159,27 @@ export default function Home(props: any) {
     return (
       <S.IndicationContent> 
         <Text color="#414660" mx='8px' mb="24px" variant="h1">Preencha as informações de indicação</Text>
-        <S.IndicationContentSelects>
-
-          <S.InputSelect name="Section" style={{flex: 1}}>
-            {dataSector.map(({ name, sector_id}) => (            
-              <option value={sector_id}>{name}</option> 
-            ))}
-          </S.InputSelect>
-        </S.IndicationContentSelects>
-
+        <>
+          <Text color="#414660" mx='8px' mb="8px" variant="h3">Nome da empresa</Text>
+          <S.IndicationContentSelects>
+              <S.InputSelect name="Section" style={{flex: 1}}>
+                {dataCompanies.map(({ name, company_id}) => (            
+                  <option value={company_id}>{name}</option> 
+                ))}
+              </S.InputSelect>
+          </S.IndicationContentSelects>
+        </>
+        <>
+          <Text color="#414660" mx='8px' mb="8px" variant="h3">Categoria</Text>
+          <S.IndicationContentSelects>
+              <S.InputSelect name="Section" style={{flex: 1}}>
+                {dataSector.map(({ name, sector_id}) => (            
+                  <option value={sector_id}>{name}</option> 
+                ))}
+              </S.InputSelect>
+          </S.IndicationContentSelects>
+        </>
+        <Text color="#414660" mx='8px' mb="8px" variant="h3">Descrição da indicação</Text>
         <S.InputTextArea />
         <S.IndicationContentButton> Salvar indicação</S.IndicationContentButton>
       </S.IndicationContent>

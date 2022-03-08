@@ -77,8 +77,15 @@ export default {
     width: 100%;
     flex: 1;
     min-width: 200px;
-    margin: 0 8px 16px;
+    margin: 8px 8px 16px;
   `,
+
+  InputLabel: styled.div`
+    flex: 1;
+    min-width: 200px;
+    margin-right: 16px;
+  `,
+
   EmployerContentButtons: styled.div`
     display: flex;
     align-content: flex-start;
@@ -223,5 +230,4 @@ export default {
     color: white;
   }
 `,
-
 };
