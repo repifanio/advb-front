@@ -194,10 +194,16 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: default;
-    :hover {
-      background-color: #414660;
-      color: white;
+    &:not([disabled]) {
+      cursor: pointer;
+      :hover {
+        background-color: #414660;
+        color: white;
+      }
+    }
+    &:disabled {
+      opacity: 0.3;
+      cursor: default;
     }
   `,
   ContactContent: styled.div`
