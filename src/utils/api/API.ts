@@ -12,7 +12,12 @@ export const API = axios.create({
 
 API.interceptors.request.use(
   async config => {
-    const { token } = await JSON.parse(localStorage.getItem('userInfo'))
+    const useInfo = localStorage.getItem('userInfo')
+    if (!useInfo) {
+      return config
+    }
+    
+    const { token } = await JSON.parse(useInfo)
 
     if (!token) {
       return config
