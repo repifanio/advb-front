@@ -61,7 +61,6 @@ export default function Home(props: any) {
   });
 
   const onRequestCompany = (e) => {
-    console.log("Caraca", e.target.value)
     setSelectedCompany(e.target.value)    
   }
 
@@ -75,7 +74,6 @@ export default function Home(props: any) {
   }, [selectedCompany])
 
   const saveContact = async () => {
-    console.log("cara", selectedCompany)
     await refetchNewContacts()
     refetchContacts()
     setCreateContact(false)
@@ -168,7 +166,7 @@ export default function Home(props: any) {
   const VotationContent = () => {
 
     return (
-      <div> VotationContent </div>
+      null
     )
   }
 

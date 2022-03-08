@@ -47,8 +47,7 @@ export default function Login(props: any) {
       <S.ContentLogin>
         <Text variant="h1" textAlign="center" mb="30px">Falta pouco para começar!</Text>
         <S.Input onChange={(e => setEmail(e.target.value))} placeholder="E-mail"/>
-        <S.Input onChange={(e => setPassword(e.target.value))} type="password" placeholder="Senha"/>
-        {console.log("Dado", data)}
+        <S.Input onChange={(e => setPassword(e.target.value))} type="password" placeholder="Senha"/>        
         <S.Button disabled={isEmpty()} onClick={onLogin}> Entrar </S.Button>
       </S.ContentLogin>
     </S.Content>
