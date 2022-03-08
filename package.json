@@ -1,0 +1,38 @@
+{
+  "name": "indications",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "next dev",
+    "lint": "next lint",
+    "build": "next build",
+    "start": "next start",
+    "test": "jest --watch",
+    "test:ci": "jest --ci",
+    "build-surge": "next build && next export -o build && cd build && npx surge"
+  },
+  "dependencies": {
+    "axios": "^0.26.0",
+    "next": "latest",
+    "next-images": "^1.8.4",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-modal": "^3.14.4",
+    "react-query": "^3.34.16",
+    "styled-components": "^5.3.3",
+    "styled-system": "^5.1.5"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.17.5",
+    "@testing-library/jest-dom": "5.16.1",
+    "@testing-library/react": "12.1.2",
+    "@testing-library/user-event": "13.5.0",
+    "@types/react": "17.0.38",
+    "babel-jest": "27.4.5",
+    "babel-loader": "^8.2.3",
+    "eslint": "8.5.0",
+    "eslint-config-next": "latest",
+    "eslint-plugin-testing-library": "5.0.1",
+    "jest": "27.4.5",
+    "typescript": "4.5.4"
+  }
+}
