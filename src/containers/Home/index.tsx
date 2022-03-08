@@ -170,7 +170,7 @@ export default function Home(props: any) {
       <S.ExcelComponent>
         <S.ExcelComponentLine>
           {['Nome', 'Setor', 'Telefone', 'E-mail'].map((item) => (
-            <S.ExcelExcelComponentItem style={{fontWeight: '700'}}> { item} </S.ExcelExcelComponentItem>
+            <S.ExcelExcelComponentItem style={{fontWeight: '700', color: '#414660'}}> { item} </S.ExcelExcelComponentItem>
           ))}
         </S.ExcelComponentLine>
 
@@ -278,7 +278,7 @@ export default function Home(props: any) {
   return (
     <S.Content justifyContent="center">
       <S.Header>
-        <Text textAlign="center" color="white" variant="h1">Nome da Aplicação</Text>
+        <Text textAlign="center" color="white" variant="h1">ADVB - Prêmio exportação</Text>
       </S.Header>
       <S.Left>
         <S.LeftButton isSelected={isSelected('Employers')} onClick={() => setSection('Employers')}> Empresas </S.LeftButton>
