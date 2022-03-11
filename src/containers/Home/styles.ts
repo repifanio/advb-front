@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { Wrapped } from '~/components';
+import logoUrl from '../../assets/logo-advb.png' 
 
 export default {
   Content: styled(Wrapped)`
@@ -8,18 +9,19 @@ export default {
     left: 0;
     display: flex;
     flex: 1;
-    // background-color: #cdcdcd;
+    //background-color: #444;
     padding-top: 80px;
     width: 100%;
   `,
   Left: styled.div`
-    background-color: #808abc;
+    //background-color: #808abc;
+    background-color: #ffffff;
     height: calc(100vh - 80px);
     min-width: 300px;
-    border: solid 1px black;
+    border: solid 1px #4054B2;
   `,
   LeftButton: styled.button`
-    background-color: ${({ isSelected }) => isSelected ? '#5f668c' : 'white'};
+    background-color: ${({ isSelected }) => isSelected ? '#4054B2' : 'white'};
     color: ${({ isSelected }) => isSelected ? 'white' : '#414660'};
     text-decoration: none;    
     border: none;
@@ -31,10 +33,10 @@ export default {
     justify-content: center;
     width: 100%;
     font-weight: 700;
-    border-bottom: solid 1px #414660;
+    border-bottom: solid 1px #4054B2;
     cursor: pointer;
     :hover {
-      background-color: #414660;
+      background-color: #191D5E;
       color: white;
     }
   `,
@@ -47,8 +49,9 @@ export default {
     left: 0;
     height: 80px;
     width: 100%;
-    background-color: #414660;
+    //background-color: #414660;
     display: flex;
+    background-color: #FFFFF;
     justify-content: center;
     align-items: center;
   `,
@@ -94,7 +97,7 @@ export default {
   `,
   EmployerContentButton: styled.button`
     margin: 0 8px 16px;
-    background-color: #5f668c;
+    background-color: #4054B2;
     color: white;
     text-decoration: none;    
     border: none;
@@ -108,12 +111,12 @@ export default {
     flex: 1;
     min-width: 200px;
     font-weight: 700;
-    border-bottom: solid 1px #414660;
+    border-bottom: solid 1px #191D5E;
     border-radius: 4px;
     &:not([disabled]) {
       cursor: pointer;
       :hover {
-        background-color: #414660;
+        background-color: #191D5E;
         color: white;
       }
     }
@@ -183,7 +186,7 @@ export default {
   `,
   IndicationContentButton: styled.button`
     margin: 0 8px;
-    background: #5f668c;
+    background: #4054B2;
     text-decoration: none;
     color: white;
     border: none;
@@ -197,7 +200,7 @@ export default {
     &:not([disabled]) {
       cursor: pointer;
       :hover {
-        background-color: #414660;
+        background-color: #191D5E;
         color: white;
       }
     }
@@ -219,7 +222,7 @@ export default {
   `,
   ContactContentButton: styled.button`
   margin: 0 8px;
-  background: #5f668c;
+  background: #4054B2;
   text-decoration: none;
   color: white;
   border: none;
@@ -232,8 +235,15 @@ export default {
   justify-content: center;
   cursor: default;
   :hover {
-    background-color: #414660;
+    background-color: #191D5E;
     color: white;
   }
 `,
+  Logo: styled.img.attrs({
+    src: `${logoUrl}`
+  })` 
+    margin-top: 20px;
+    width: 350px;
+    height: 350px;
+  `
 };

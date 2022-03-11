@@ -8,7 +8,6 @@ export const getCompanies = async (): Promise<any> => {
 };
 
 export const getCompany = async ( company_id ): Promise<any> => {
-  console.log("cara", company_id)
   try {
     return await API.get(`/company/${company_id}`);
   } catch (error) {

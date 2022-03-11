@@ -8,5 +8,6 @@ module.exports = withImages({
   images: {
     loader: 'imgix',
     path: '/',
+    disableStaticImages: true
   },
 })

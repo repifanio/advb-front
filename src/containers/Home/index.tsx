@@ -27,6 +27,7 @@ export default function Home(props: any) {
   const { setCompany, company } = useComapny()
   const [section, setSection] = useState("Employers");
   const [createContact, setCreateContact] = useState(false)
+  const [setorDescription, setSetorDescription] = useState("")
 
   const isSelected = (name) => (
     name === section
@@ -46,6 +47,11 @@ export default function Home(props: any) {
       userId: user.id,
       [key]: e.target.value
     })
+  }
+
+  const getSectorDescription = (key, e) => {
+    const descript = e.filter( item => item.sector_id == key)
+    setSetorDescription(descript[0].description)
   }
 
   
@@ -99,8 +105,12 @@ export default function Home(props: any) {
     clearContact()
   }
 
+  const editCompany = async () => {
+    
+  }
+
   const saveIndication = async () => {
-    refetchNewIndication()
+    await refetchNewIndication()
     clearIndication()
   }
 
@@ -124,13 +134,13 @@ export default function Home(props: any) {
   const EmployerContent = () => {
     return (
       <S.EmployerContent> 
-        <Text color="#414660" mx='8px' mb="24px" variant="h1">Dados da Empresa</Text>
+        <Text color="#292d6e" mx='8px' mb="24px" variant="h1">Dados da Empresa</Text>
         {
           dataCompanies?.length && (
             <>      
-            <Text color="#414660" mx='8px' mb="8px" variant="h3">Nome da empresa</Text>
+            <Text color="#292d6e" mx='8px' mb="8px" variant="h3">Nome da empresa</Text>
             <S.InputSelect onChange={onRequestCompany} value={selectedCompany}>
-              <option selected={true} disabled value={null}>Nome da empresa</option> 
+              <option selected={false} disabled value={null}>Nome da empresa</option> 
               {dataCompanies.map(({ name, company_id}) => (            
                 <option value={company_id}>{name}</option> 
               ))}
@@ -142,23 +152,23 @@ export default function Home(props: any) {
           dataCompany && (
             <S.EmployerContentInputs>
               <S.InputLabel>
-                <Text color="#414660" mx='8px' mb="24px" variant="h3">Documento</Text>
+                <Text color="#292d6e" mx='8px' mb="24px" variant="h3">Documento</Text>
                 <S.Input disabled value={dataCompany[0].document} />
               </S.InputLabel>
               {/* <S.Input disabled value={dataCompany[0].company_id}/> */}
               <S.InputLabel>
-                <Text color="#414660" mx='8px' mb="24px" variant="h3">Endereço</Text>
+                <Text color="#292d6e" mx='8px' mb="24px" variant="h3">Endereço</Text>
                 <S.Input disabled value={dataCompany[0].address}/>
               </S.InputLabel>
             </S.EmployerContentInputs>
           )
         }
         <S.EmployerContentButtons>
-          <S.EmployerContentButton disabled> Atualizar informações da empresa</S.EmployerContentButton>
+          <S.EmployerContentButton disabled={!selectedCompany} > Atualizar informações da empresa</S.EmployerContentButton>
           <S.EmployerContentButton disabled={!selectedCompany} onClick={() => setCreateContact(true)}> Criar um novo contato</S.EmployerContentButton>
         </S.EmployerContentButtons>
 
-        <Text color="#414660" mx='8px' my="24px" variant="h1">Contatos da Empresa</Text>
+        <Text color="#292d6e" mx='8px' my="24px" variant="h1">Contatos da Empresa</Text>
 
         <ExcelComponent />
       </S.EmployerContent>
@@ -170,7 +180,7 @@ export default function Home(props: any) {
       <S.ExcelComponent>
         <S.ExcelComponentLine>
           {['Nome', 'Setor', 'Telefone', 'E-mail'].map((item) => (
-            <S.ExcelExcelComponentItem style={{fontWeight: '700', color: '#414660'}}> { item} </S.ExcelExcelComponentItem>
+            <S.ExcelExcelComponentItem style={{fontWeight: '700', color: '#292d6e'}}> { item} </S.ExcelExcelComponentItem>
           ))}
         </S.ExcelComponentLine>
 
@@ -199,30 +209,45 @@ export default function Home(props: any) {
   const IndicationContent = () => {
     return (
       <S.IndicationContent> 
-        <Text color="#414660" mx='8px' mb="24px" variant="h1">Preencha as informações de indicação</Text>
+        <Text color="#292d6e" mx='8px' mb="24px" variant="h1">Preencha as informações de indicação</Text>
         <>
-          <Text color="#414660" mx='8px' mb="8px" variant="h3">Nome da empresa</Text>
+          <Text color="#292d6e" mx='8px' mb="8px" variant="h3">Nome do setor</Text>
           <S.IndicationContentSelects>
-              <S.InputSelect name="Section" style={{flex: 1}}>
-                {dataCompanies?.length && dataCompanies.map(({ name, company_id}) => (            
-                  <option value={company_id}>{name}</option> 
-                ))}
-              </S.InputSelect>
-          </S.IndicationContentSelects>
-        </>
-        <>
-          <Text color="#414660" mx='8px' mb="8px" variant="h3">Categoria</Text>
-          <S.IndicationContentSelects>
-              <S.InputSelect name="Section" style={{flex: 1}}>
+              <S.InputSelect name="Section" style={{flex: 1}} onChange={(e) => { changeNewIndication('sectorId', e); getSectorDescription(e.target.value, dataSector) }} value={newIndication.sectorId} >  
+                <option selected={true} disabled value={null}>Escolha o setor</option> 
                 {dataSector?.length && dataSector.map(({ name, sector_id}) => (            
                   <option value={sector_id}>{name}</option> 
                 ))}
               </S.InputSelect>
           </S.IndicationContentSelects>
         </>
-        <Text color="#414660" mx='8px' mb="8px" variant="h3">Descrição da indicação</Text>
-        <S.InputTextArea />
-        <S.IndicationContentButton> Salvar indicação</S.IndicationContentButton>
+        <>
+          <Text color="#292d6e" mx='8px' mb="8px" variant="h3">Descrição da categoria</Text>
+          <S.InputTextArea key="categoryDescription" value={setorDescription}/>
+        </>
+        <>
+          <Text color="#292d6e" mx='8px' mb="8px" variant="h3">Nome da empresa</Text>
+          <S.IndicationContentSelects>
+              <S.InputSelect name="Company" style={{flex: 1}} onChange={onRequestCompany} value={selectedCompany}>
+                {dataCompanies?.length && dataCompanies.map(({ name, company_id}) => (            
+                  <option value={company_id}>{name}</option> 
+                ))}
+              </S.InputSelect>
+          </S.IndicationContentSelects>
+        </>
+        
+        <Text color="#292d6e" mx='8px' mb="8px" variant="h3">Descrição da indicação</Text>
+        <S.InputTextArea 
+          autoFocus="autoFocus" 
+          onChange={(e) => changeNewIndication('description', e)} 
+          value={newIndication.description} 
+          onFocus={(e) => {
+            var val = e.target.value;
+            e.target.value = '';
+            e.target.value = val;
+          }} 
+        />
+        <S.IndicationContentButton onClick={saveIndication}> Salvar indicação</S.IndicationContentButton>
       </S.IndicationContent>
     )
   }
@@ -263,7 +288,7 @@ export default function Home(props: any) {
         contentLabel="Example Modal"
       >
         <S.ContactContent>
-          <Text color="#414660" mx='8px' mb="24px" variant="h1">Preencha as informações do contato</Text>
+          <Text color="#292d6e" mx='8px' mb="24px" variant="h1">Preencha as informações do contato</Text>
           <S.ContactContentInputs>
             <S.Input key="Nome" placeholder="Nome" value={newContact.name} onChange={(e) => changeNewContact('name', e)}/>
             <S.Input placeholderkeyE-mail placeholder="E-mail" value={newContact.email} onChange={(e) => changeNewContact('email', e)}/>
@@ -278,7 +303,8 @@ export default function Home(props: any) {
   return (
     <S.Content justifyContent="center">
       <S.Header>
-        <Text textAlign="center" color="white" variant="h1">ADVB - Prêmio exportação</Text>
+        <S.Logo ></S.Logo>
+        {/* <Text textAlign="center" color="#292d6e" variant="h1">50º Prêmio Exportação RS</Text> */}
       </S.Header>
       <S.Left>
         <S.LeftButton isSelected={isSelected('Employers')} onClick={() => setSection('Employers')}> Empresas </S.LeftButton>
