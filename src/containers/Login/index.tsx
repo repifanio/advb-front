@@ -42,7 +42,7 @@ export default function Login(props: any) {
   return (
     <S.Content justifyContent="center">
       <S.Logo>
-        <Text variant="h1" textAlign="center" mb="30px" color="white">ADVBRS</Text>
+        <Text variant="h1" textAlign="center" mb="30px" color="white">Prêmio Exportação RS</Text>
       </S.Logo>
       <S.ContentLogin>
         <Text variant="h1" textAlign="center" mb="30px">Falta pouco para começar!</Text>
