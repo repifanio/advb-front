@@ -244,7 +244,7 @@ export default function Home(props: any) {
   const IndicationContent = () => {
     return (
       <S.IndicationContent> 
-        <Text color="#292d6e" mx='8px' mb="24px" variant="h1">Preencha as informações de indicação</Text>
+        <Text color="#292d6e" mx='8px' mb="24px" variant="h1">Preencha as informações da inscrição</Text>
         <>
           <Text color="#292d6e" mx='8px' mb="8px" variant="h3">Nome do setor</Text>
           <S.IndicationContentSelects>
@@ -278,7 +278,7 @@ export default function Home(props: any) {
           </S.IndicationContentSelects>
         </>
         
-        <Text color="#292d6e" mx='8px' mb="8px" variant="h3">Descrição da indicação</Text>
+        <Text color="#292d6e" mx='8px' mb="8px" variant="h3">Descrição da inscrição</Text>
         <S.InputTextArea 
           autoFocus="autoFocus" 
           onChange={(e) => changeNewIndication('description', e)} 
