@@ -350,7 +350,7 @@ export default function Home(props: any) {
       </S.Header>
       <S.Left>
         <S.LeftButton isSelected={isSelected('Employers')} onClick={() => setSection('Employers')}> Empresas </S.LeftButton>
-        <S.LeftButton isSelected={isSelected('Indications')} onClick={() => setSection('Indications')}> Indicações </S.LeftButton>
+        <S.LeftButton isSelected={isSelected('Indications')} onClick={() => setSection('Indications')}> Inscrição </S.LeftButton>
         <S.LeftButton isSelected={isSelected('Votations')} onClick={() => setSection('Votations')}> Votação </S.LeftButton>
       </S.Left>
       <RightContent />
