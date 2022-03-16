@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { Wrapped } from '~/components';
+import img from './assets/fundo.png'
 
 export default {
   Content: styled(Wrapped)`
@@ -12,7 +13,8 @@ export default {
     align-items: center;
     height: 100vh;
     width: 100vw;
-    background-color: #414660;
+    //background-color: #FFFFFF;
+    background-image: url(${img});
   `,
   Logo: styled.div`
     position: absolute;
@@ -42,7 +44,7 @@ export default {
     margin-bottom: 16px;
   `,
   Button: styled.button`
-    background: #414660;
+    background: #4054B2;
     text-decoration: none;
     color: white;
     border: none;

@@ -7,6 +7,17 @@ export const getCompanies = async (): Promise<any> => {
   }
 };
 
+export const getCompanyIndication = async (setor_id): Promise<any> => {
+  try {
+
+    console.log('setor_id', setor_id)
+
+    return await API.get(`/company/companyIndication/${setor_id}`);
+  } catch (error) {
+    console.log('Error no request de companies');
+  }
+};
+
 export const getCompany = async ( company_id ): Promise<any> => {
   try {
     return await API.get(`/company/${company_id}`);
