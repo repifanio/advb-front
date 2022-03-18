@@ -158,6 +158,7 @@ export default {
     align-content: flex-start;
     flex-direction: row;
     flex-wrap: wrap;  
+    width: 100%;
   `,
   InputSelect: styled.select`
     color: #3e3e3e;
@@ -245,5 +246,36 @@ export default {
     margin-top: 20px;
     width: 350px;
     height: 350px;
-  `
+  `,
+
+  SelectEmpresas: styled.div`
+    display: flex;
+    flex-direction: row;
+  `,
+
+  AddCompanyButton: styled.button`
+    margin: 0 8px;
+    background: #4054B2;
+    text-decoration: none;
+    color: white;
+    border: none;
+    padding: 0 20px;
+    border-radius: 4px;
+    height: 45px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    &:not([disabled]) {
+      cursor: pointer;
+      :hover {
+        background-color: #191D5E;
+        color: white;
+      }
+    }
+    &:disabled {
+      opacity: 0.3;
+      cursor: default;
+    }
+  `,
 };

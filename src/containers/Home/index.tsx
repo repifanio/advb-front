@@ -31,6 +31,8 @@ export default function Home(props: any) {
   const [setorDescription, setSetorDescription] = useState("")
   const [setorId, setSectorId] = useState(0)
   const [companyName, setcompanyName] = useState(0)
+  const [createCompany, setCreateCompany] = useState(false)
+  const [openToNewCompany, setOpenToNewCompany] = useState(false)
 
   const isSelected = (name) => (
     name === section
@@ -59,6 +61,7 @@ export default function Home(props: any) {
 
   const getSectorId = (key) => {
     setSectorId(key)
+    btnAddCompanyState(key)
   } 
   
   const getCompanyName = (key) => {
@@ -111,6 +114,14 @@ export default function Home(props: any) {
 
   const onRequestCompanyIndication = (e) => {
     setSelectedCompanyIndication(e.target.value)    
+  }
+
+  const btnAddCompanyState = (e) => {
+    if (e == 3) {
+      setOpenToNewCompany(true)
+    } else {
+      setOpenToNewCompany(false)
+    }
   }
 
   useEffect(()=> {
@@ -269,6 +280,7 @@ export default function Home(props: any) {
         </>
         <>
           <Text color="#292d6e" mx='8px' mb="8px" variant="h3">Nome da empresa</Text>
+          <S.SelectEmpresas>
           <S.IndicationContentSelects>
               <S.InputSelect name="Company" style={{flex: 1}} onChange={onRequestCompanyIndication} value={selectedCompanyIndication}>
                 {dataCompaniesIndication?.length && dataCompaniesIndication.map(({ name, company_id}) => (            
@@ -276,6 +288,9 @@ export default function Home(props: any) {
                 ))}
               </S.InputSelect>
           </S.IndicationContentSelects>
+          <S.AddCompanyButton disabled={!openToNewCompany} onClick={() => setCreateCompany(true)}>+</S.AddCompanyButton>
+          </S.SelectEmpresas>
+          
         </>
         
         <Text color="#292d6e" mx='8px' mb="8px" variant="h3">Descrição da inscrição</Text>
@@ -342,6 +357,33 @@ export default function Home(props: any) {
       </Modal>
     )
   }
+
+  const modalNewContact = () => {
+    return (
+      <Modal
+        isOpen={createCompany}
+        onRequestClose={() => setCreateCompany(false)}
+        style={{
+          overlay: {
+            backgroundColor: `rgba(0,0,0,0.7)`
+          },
+        }}
+        contentLabel="Example Modal"
+      >
+        <S.ContactContent>
+          <Text color="#292d6e" mx='8px' mb="24px" variant="h1">Preencha as informações da empresa</Text>
+          <S.ContactContentInputs>
+            <S.Input key="Nome" placeholder="Nome" value={newContact.name} onChange={(e) => changeNewContact('name', e)}/>
+            <S.Input key="Documento" placeholder="Documento" value={newContact.function_service} onChange={(e) => changeNewContact('function_service', e)} />
+            <S.Input key="Endereço" placeholder="Endereço"  />
+          </S.ContactContentInputs>
+          <S.ContactContentButton onClick={saveContact}> Salvar Empresa</S.ContactContentButton>
+        </S.ContactContent> 
+      </Modal>
+    )
+  }
+
+
   return (
     <S.Content justifyContent="center">
       <S.Header>
@@ -355,6 +397,7 @@ export default function Home(props: any) {
       </S.Left>
       <RightContent />
       {modalContent()}
+      {modalNewContact()}
     </S.Content>
   )
 }
