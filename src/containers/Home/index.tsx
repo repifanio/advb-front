@@ -1,8 +1,12 @@
 import { useQuery } from 'react-query';
-import { getCompanies, getCompany, getCompanyIndication, getCompanyContacts, getSector, postCompanyContacts, postIndication } from '~/utils';
+import {
+  getCompanies, getCompany, getCompanyIndication,
+  getCompanyContacts, getSector, postCompanyContacts,
+  postIndication, postCompany
+} from '~/utils';
 import Modal from 'react-modal';
 import { useUser, useComapny } from '~/context'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef, useLayoutEffect } from 'react'
 import { Text } from "~/components";
 import S from "./styles";
 
@@ -13,15 +17,18 @@ export default function Home(props: any) {
     function_service: "",
     phone: "",
   })
-
   const [newIndication, setNewIndication] = useState({
     userId: 0,
     description: "",
     sectorId: undefined
   })
-
+  const [newCompany, setNewCompany] = useState({
+    name: "",
+    document: "",
+    address: "",
+    userId: 0,
+  })
   const [name, setName] = useState("")
-
   const [selectedCompany, setSelectedCompany] = useState(undefined)
   const [selectedCompanyIndication, setSelectedCompanyIndication] = useState(undefined)
   const { user } = useUser()
@@ -45,6 +52,19 @@ export default function Home(props: any) {
     })
   }
 
+  const inputRef = useRef<any>();
+
+  useEffect(() => {
+
+    if (inputRef.current) {
+      const endOfField = newIndication.description.length;
+
+      inputRef.current.setSelectionRange(endOfField, endOfField);
+      inputRef.current.focus();
+    }
+
+  }, [newIndication])
+
   const changeNewIndication = (key, e) => {
     e.preventDefault()
     setNewIndication({
@@ -54,47 +74,48 @@ export default function Home(props: any) {
     })
   }
 
-  const getSectorDescription = (key, e) => {
-    const descript = e.filter( item => item.sector_id == key)
-    setSetorDescription(descript[0].description)
+  const changeNewCompany = (key, e) => {
+    setNewCompany({
+      ...newCompany,
+      userId: user.id,
+      [key]: e.target.value
+    })
   }
 
-  const getSectorId = (key) => {
-    setSectorId(key)
-    btnAddCompanyState(key)
-  } 
-  
+  const getSectorDescription = (key, e) => {
+    const sector = e.filter(item => item.sector_id == key)
+    const setorId = sector[0].sector_id;
+
+    setSetorDescription(sector[0].description)
+    btnAddCompanyState(setorId)
+    setSectorId(setorId)
+  }
+
   const getCompanyName = (key) => {
     setcompanyName(key)
-  } 
+  }
 
   const { data: { data: dataCompanies } = {} } = useQuery(
-    "companies", 
-    getCompanies
+    "companies", () => getCompanies()
   );
 
-  const { data: { data: dataCompaniesIndication } = {} } = useQuery(
-    "companyIndication", 
-    getCompanyIndication
-  );
-  
-  const { data: { data: dataCompany } = {} , refetch: refetchCompany } =  useQuery("company", () => getCompany(selectedCompany), {
+  const { data: { data: dataCompany } = {}, refetch: refetchCompany } = useQuery("company", () => getCompany(selectedCompany), {
     refetchOnWindowFocus: false,
     enabled: false,
   });
 
-  const { data: { data: dataCompanyIndication } = {} , refetch: refetchCompanyIndication } =  useQuery("companyIndication", () => getCompanyIndication(setorId), {
+  const { data: { data: dataCompanyIndication } = {}, refetch: refetchCompanyIndication } = useQuery("companyIndication", () => getCompanyIndication(setorId), {
     refetchOnWindowFocus: false,
     enabled: false,
   });
 
-  const { data: { data: dataContacts } = {} , refetch: refetchContacts } = useQuery("contacts", () => getCompanyContacts(selectedCompany), {
+  const { data: { data: dataContacts } = {}, refetch: refetchContacts } = useQuery("contacts", () => getCompanyContacts(selectedCompany), {
     refetchOnWindowFocus: false,
     enabled: false,
   });
 
   const { data: { data: dataSector } = {} } = useQuery(
-    "sectors", 
+    "sectors",
     getSector
   );
 
@@ -102,29 +123,34 @@ export default function Home(props: any) {
     refetchOnWindowFocus: false,
     enabled: false,
   });
-  
-  const { refetch: refetchNewIndication } = useQuery("newcontacts", () => postIndication(dataCompanyIndication.company_id || selectedCompanyIndication , newIndication), {
+
+  const { refetch: refetchNewIndication } = useQuery("newcontacts", () => postIndication(selectedCompanyIndication, newIndication), {
+    refetchOnWindowFocus: false,
+    enabled: false,
+  });
+
+  const { refetch: refetchNewCompany } = useQuery("newcompany", () => postCompany(newCompany), {
     refetchOnWindowFocus: false,
     enabled: false,
   });
 
   const onRequestCompany = (e) => {
-    setSelectedCompany(e.target.value)    
+    setSelectedCompany(e.target.value)
   }
 
   const onRequestCompanyIndication = (e) => {
-    setSelectedCompanyIndication(e.target.value)    
+    setSelectedCompanyIndication(e.target.value)
   }
 
   const btnAddCompanyState = (e) => {
-    if (e == 3) {
+    if ((e == 3) || (e == 4) || (e == 5)) {
       setOpenToNewCompany(true)
     } else {
       setOpenToNewCompany(false)
     }
   }
 
-  useEffect(()=> {
+  useEffect(() => {
     if (!selectedCompany) {
       return
     }
@@ -133,13 +159,13 @@ export default function Home(props: any) {
     refetchContacts()
   }, [selectedCompany])
 
-  useEffect(()=> {
-    if (!selectedCompanyIndication){
+  useEffect(() => {
+    if (!selectedCompanyIndication) {
       return
     }
 
     refetchCompanyIndication()
-  },[selectedCompanyIndication])
+  }, [selectedCompanyIndication])
 
   const saveContact = async () => {
     await refetchNewContacts()
@@ -148,8 +174,14 @@ export default function Home(props: any) {
     clearContact()
   }
 
+  const saveCompany = async () => {
+    await refetchNewCompany()
+    setCreateCompany(false)
+    clearNewCompany()
+  }
+
   const editCompany = async () => {
-    
+
   }
 
   const saveIndication = async () => {
@@ -166,6 +198,15 @@ export default function Home(props: any) {
     })
   }
 
+  const clearNewCompany = () => {
+    setNewCompany({
+      name: "",
+      document: "",
+      address: "",
+      userId: 0,
+    })
+  }
+
   const clearIndication = () => {
     setNewIndication({
       userId: 0,
@@ -173,24 +214,24 @@ export default function Home(props: any) {
       sectorId: undefined
     })
   }
-  
+
   const EmployerContent = () => {
     return (
-      <S.EmployerContent> 
+      <S.EmployerContent>
         <Text color="#292d6e" mx='8px' mb="24px" variant="h1">Dados da Empresa</Text>
         {
           dataCompanies?.length && (
-            <>      
-            <Text color="#292d6e" mx='8px' mb="8px" variant="h3">Nome da empresa</Text>
-            <S.InputSelect onChange={(e) => {
-              onRequestCompany(e);
-              getCompanyName(e)
-            }} value={selectedCompany}>
-              <option selected={false} disabled value={null}>Nome da empresa</option> 
-              {dataCompanies.map(({ name, company_id}) => (            
-                <option value={company_id}>{name}</option> 
-              ))}
-            </S.InputSelect>
+            <>
+              <Text color="#292d6e" mx='8px' mb="8px" variant="h3">Nome da empresa</Text>
+              <S.InputSelect onChange={(e) => {
+                onRequestCompany(e);
+                getCompanyName(e)
+              }} value={selectedCompany}>
+                <option selected={false} disabled value={null}>Nome da empresa</option>
+                {dataCompanies.map(({ name, company_id }) => (
+                  <option value={company_id}>{name}</option>
+                ))}
+              </S.InputSelect>
             </>
           )
         }
@@ -204,7 +245,7 @@ export default function Home(props: any) {
               {/* <S.Input disabled value={dataCompany[0].company_id}/> */}
               <S.InputLabel>
                 <Text color="#292d6e" mx='8px' mb="24px" variant="h3">Endereço</Text>
-                <S.Input disabled value={dataCompany[0].address}/>
+                <S.Input disabled value={dataCompany[0].address} />
               </S.InputLabel>
             </S.EmployerContentInputs>
           )
@@ -226,21 +267,21 @@ export default function Home(props: any) {
       <S.ExcelComponent>
         <S.ExcelComponentLine>
           {['Nome', 'Setor', 'Telefone', 'E-mail'].map((item) => (
-            <S.ExcelExcelComponentItem style={{fontWeight: '700', color: '#292d6e'}}> { item} </S.ExcelExcelComponentItem>
+            <S.ExcelExcelComponentItem style={{ fontWeight: '700', color: '#292d6e' }}> {item} </S.ExcelExcelComponentItem>
           ))}
         </S.ExcelComponentLine>
 
         {dataContacts?.length ? (
           dataContacts.map((item) => (
-            <S.ExcelComponentLine style={{display: 'flex'}}>
-              <S.ExcelExcelComponentItem>{ item.name || 'Não informado' }</S.ExcelExcelComponentItem>
-              <S.ExcelExcelComponentItem>{ item.function_service || 'Não informado' }</S.ExcelExcelComponentItem>
-              <S.ExcelExcelComponentItem>{ item.phone || 'Não informado' }</S.ExcelExcelComponentItem>
-              <S.ExcelExcelComponentItem>{ item.email || 'Não informado' }</S.ExcelExcelComponentItem>
+            <S.ExcelComponentLine style={{ display: 'flex' }}>
+              <S.ExcelExcelComponentItem>{item.name || 'Não informado'}</S.ExcelExcelComponentItem>
+              <S.ExcelExcelComponentItem>{item.function_service || 'Não informado'}</S.ExcelExcelComponentItem>
+              <S.ExcelExcelComponentItem>{item.phone || 'Não informado'}</S.ExcelExcelComponentItem>
+              <S.ExcelExcelComponentItem>{item.email || 'Não informado'}</S.ExcelExcelComponentItem>
             </S.ExcelComponentLine>
           ))
-        ): (
-          <S.ExcelComponentLine style={{display: 'flex'}}>
+        ) : (
+          <S.ExcelComponentLine style={{ display: 'flex' }}>
             <S.ExcelExcelComponentItem>Não informado</S.ExcelExcelComponentItem>
             <S.ExcelExcelComponentItem>Não informado</S.ExcelExcelComponentItem>
             <S.ExcelExcelComponentItem>Não informado</S.ExcelExcelComponentItem>
@@ -254,58 +295,56 @@ export default function Home(props: any) {
 
   const IndicationContent = () => {
     return (
-      <S.IndicationContent> 
+      <S.IndicationContent>
         <Text color="#292d6e" mx='8px' mb="24px" variant="h1">Preencha as informações da inscrição</Text>
         <>
-          <Text color="#292d6e" mx='8px' mb="8px" variant="h3">Nome do setor</Text>
+          <Text color="#292d6e" mx='8px' mb="8px" variant="h3">Nome da categoria</Text>
           <S.IndicationContentSelects>
-              <S.InputSelect name="Section" style={{flex: 1}} onChange={(e) => {
-                 changeNewIndication('sectorId', e); 
-                 getSectorDescription(e.target.value, dataSector); 
-                 getSectorId(e.target.value); 
-                 onRequestCompanyIndication(e)
-                }} 
-                value={newIndication.sectorId}
-              >  
-                <option selected={true} disabled value={null}>Escolha o setor</option> 
-                {dataSector?.length && dataSector.map(({ name, sector_id}) => (            
-                  <option value={sector_id}>{name}</option> 
-                ))}
-              </S.InputSelect>
+            <S.InputSelect name="Section" style={{ flex: 1 }} onChange={(e) => {
+              getSectorDescription(e.target.value, dataSector);
+              changeNewIndication('sectorId', e);
+              onRequestCompanyIndication(e)
+            }}
+              value={newIndication.description}
+            >
+              <option selected={true} disabled value={null}>Escolha a categoria</option>
+              {dataSector?.length && dataSector.map(({ name, sector_id }) => (
+                <option value={sector_id}>{name}</option>
+              ))}
+            </S.InputSelect>
           </S.IndicationContentSelects>
         </>
         <>
           <Text color="#292d6e" mx='8px' mb="8px" variant="h3">Descrição da categoria</Text>
-          <S.InputTextArea key="categoryDescription" value={setorDescription}/>
+          <S.InputTextArea key="categoryDescription" rows="8" value={setorDescription} />
         </>
         <>
           <Text color="#292d6e" mx='8px' mb="8px" variant="h3">Nome da empresa</Text>
           <S.SelectEmpresas>
-          <S.IndicationContentSelects>
-              <S.InputSelect name="Company" style={{flex: 1}} onChange={onRequestCompanyIndication} value={selectedCompanyIndication}>
-                {dataCompaniesIndication?.length && dataCompaniesIndication.map(({ name, company_id}) => (            
-                  <option value={company_id}>{name}</option> 
+            <S.IndicationContentSelects>
+              <S.InputSelect name="Company" style={{ flex: 1 }} onChange={onRequestCompanyIndication} value={selectedCompanyIndication}>
+                {dataCompanyIndication?.length && dataCompanyIndication.map(({ name, company_id }) => (
+                  <option value={company_id}>{name}</option>
                 ))}
               </S.InputSelect>
-          </S.IndicationContentSelects>
-          <S.AddCompanyButton disabled={!openToNewCompany} onClick={() => setCreateCompany(true)}>+</S.AddCompanyButton>
+            </S.IndicationContentSelects>
+            <S.AddCompanyButton disabled={!openToNewCompany} onClick={() => setCreateCompany(true)}>+</S.AddCompanyButton>
           </S.SelectEmpresas>
-          
         </>
-        
-        <Text color="#292d6e" mx='8px' mb="8px" variant="h3">Descrição da inscrição</Text>
-        <S.InputTextArea 
-          autoFocus="autoFocus" 
-          onChange={(e) => changeNewIndication('description', e)} 
-          value={newIndication.description} 
-          onFocus={(e) => {
-            var val = e.target.value;
-            e.target.value = '';
-            e.target.value = val;
-          }} 
-        />
+        <>
+          <Text key="incriptionDescription" color="#292d6e" mx='8px' mb="8px" variant="h3">Descrição da inscrição</Text>
+          <S.InputTextArea
+            ref={inputRef}
+            rows="8"
+            key="nameIndicationDescription"
+            value={newIndication.description}
+            onChange={(e) => changeNewIndication('description', e)}
+          />
+        </>
         <S.IndicationContentButton onClick={saveIndication}> Salvar indicação</S.IndicationContentButton>
+
       </S.IndicationContent>
+
     )
   }
 
@@ -347,18 +386,18 @@ export default function Home(props: any) {
         <S.ContactContent>
           <Text color="#292d6e" mx='8px' mb="24px" variant="h1">Preencha as informações do contato</Text>
           <S.ContactContentInputs>
-            <S.Input key="Nome" placeholder="Nome" value={newContact.name} onChange={(e) => changeNewContact('name', e)}/>
-            <S.Input placeholderkeyE-mail placeholder="E-mail" value={newContact.email} onChange={(e) => changeNewContact('email', e)}/>
+            <S.Input key="Nome" placeholder="Nome" value={newContact.name} onChange={(e) => changeNewContact('name', e)} />
+            <S.Input placeholderkeyE-mail placeholder="E-mail" value={newContact.email} onChange={(e) => changeNewContact('email', e)} />
             <S.Input key="Setor" placeholder="Setor" value={newContact.function_service} onChange={(e) => changeNewContact('function_service', e)} />
             <S.Input key="Telefone" placeholder="Telefone" value={newContact.phone} onChange={(e) => changeNewContact('phone', e)} />
           </S.ContactContentInputs>
           <S.ContactContentButton onClick={saveContact}> Salvar contato</S.ContactContentButton>
-        </S.ContactContent> 
+        </S.ContactContent>
       </Modal>
     )
   }
 
-  const modalNewContact = () => {
+  const modalNewCompany = () => {
     return (
       <Modal
         isOpen={createCompany}
@@ -373,12 +412,12 @@ export default function Home(props: any) {
         <S.ContactContent>
           <Text color="#292d6e" mx='8px' mb="24px" variant="h1">Preencha as informações da empresa</Text>
           <S.ContactContentInputs>
-            <S.Input key="Nome" placeholder="Nome" value={newContact.name} onChange={(e) => changeNewContact('name', e)}/>
-            <S.Input key="Documento" placeholder="Documento" value={newContact.function_service} onChange={(e) => changeNewContact('function_service', e)} />
-            <S.Input key="Endereço" placeholder="Endereço"  />
+            <S.Input key="nameCompany" placeholder="Nome" value={newCompany.name} onChange={(e) => changeNewCompany('name', e)} />
+            <S.Input key="documentCompany" placeholder="Documento" value={newCompany.document} onChange={(e) => changeNewCompany('document', e)} />
+            <S.Input key="addressCompany" placeholder="Endereço" value={newCompany.address} onChange={(e) => changeNewCompany('address', e)} />
           </S.ContactContentInputs>
-          <S.ContactContentButton onClick={saveContact}> Salvar Empresa</S.ContactContentButton>
-        </S.ContactContent> 
+          <S.ContactContentButton onClick={saveCompany}> Salvar Empresa</S.ContactContentButton>
+        </S.ContactContent>
       </Modal>
     )
   }
@@ -397,7 +436,7 @@ export default function Home(props: any) {
       </S.Left>
       <RightContent />
       {modalContent()}
-      {modalNewContact()}
+      {modalNewCompany()}
     </S.Content>
   )
 }

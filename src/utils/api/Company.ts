@@ -7,11 +7,8 @@ export const getCompanies = async (): Promise<any> => {
   }
 };
 
-export const getCompanyIndication = async (setor_id): Promise<any> => {
+export const  getCompanyIndication = async (setor_id): Promise<any> => {
   try {
-
-    console.log('setor_id', setor_id)
-
     return await API.get(`/company/companyIndication/${setor_id}`);
   } catch (error) {
     console.log('Error no request de companies');
@@ -42,5 +39,16 @@ export const postCompanyContacts = async ( companyId, contact ): Promise<any> =>
     return data;
   } catch (error) {
     alert("Infelizmente não foi possível registrar o contato, tente novamente!.")
+  }
+};
+
+export const postCompany = async ( company ): Promise<any> => {
+  try {
+    const data = await API.post(`/company/`, company );
+    alert("Empresa adicionada com sucesso!")
+
+    return data;
+  } catch (error) {
+    alert("Infelizmente não foi possível registrar a indicação, tente novamente!.")
   }
 };
