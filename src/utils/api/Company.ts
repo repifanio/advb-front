@@ -49,6 +49,6 @@ export const postCompany = async ( company ): Promise<any> => {
 
     return data;
   } catch (error) {
-    alert("Infelizmente não foi possível registrar a indicação, tente novamente!.")
+    alert("Infelizmente não foi possível registrar a empresa, verifique se ela já não consta na lista.")
   }
 };

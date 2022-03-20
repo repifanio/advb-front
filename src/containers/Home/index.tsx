@@ -5,22 +5,19 @@ import {
   postIndication, postCompany
 } from '~/utils';
 import Modal from 'react-modal';
-import { useUser, useComapny } from '~/context'
-import { useEffect, useState, useRef, useLayoutEffect } from 'react'
+import { useUser } from '~/context'
+import { useEffect, useState, useRef } from 'react'
 import { Text } from "~/components";
 import S from "./styles";
 
 export default function Home(props: any) {
+
+  /* #region  UseStates */
   const [newContact, setNewContact] = useState({
     name: "",
     email: "",
     function_service: "",
     phone: "",
-  })
-  const [newIndication, setNewIndication] = useState({
-    userId: 0,
-    description: "",
-    sectorId: undefined
   })
   const [newCompany, setNewCompany] = useState({
     name: "",
@@ -28,22 +25,72 @@ export default function Home(props: any) {
     address: "",
     userId: 0,
   })
-  const [name, setName] = useState("")
+  const [sectorId, setSectorId] = useState(0)
+  const [sectorDescription, setSectorDescription] = useState("")
+  const [companyFilteredToIndication, setCompanyFilteredToIndication] = useState([{
+    value: "",
+    label: ""
+  }])
+  const [indicateDescription, setindicateDescription] = useState("")
   const [selectedCompany, setSelectedCompany] = useState(undefined)
   const [selectedCompanyIndication, setSelectedCompanyIndication] = useState(undefined)
   const { user } = useUser()
-  const { setCompany, company } = useComapny()
   const [section, setSection] = useState("Employers");
   const [createContact, setCreateContact] = useState(false)
-  const [setorDescription, setSetorDescription] = useState("")
-  const [setorId, setSectorId] = useState(0)
-  const [companyName, setcompanyName] = useState(0)
   const [createCompany, setCreateCompany] = useState(false)
   const [openToNewCompany, setOpenToNewCompany] = useState(false)
+  const [companyName, setcompanyName] = useState(0)
+  /* #endregion */
 
+  /* #region  Calls to back */
+  const { data: { data: dataCompany } = {}, refetch: refetchCompany } = useQuery("companyssssss", () => getCompany(selectedCompany), {
+    refetchOnWindowFocus: false,
+    enabled: false,
+  });
+
+  const { data: { data: dataCompanyIndication } = {}, refetch: refetchCompanyIndication } = useQuery("companyIndication", async () => await getCompanyIndication(sectorId), {
+    refetchOnWindowFocus: false,
+    enabled: false,
+  });
+
+  const { data: { data: dataSector } = {} } = useQuery(
+    "sectors",
+    getSector
+  );
+
+  const { refetch: refetchNewIndication } = useQuery("newindication", () => postIndication(selectedCompanyIndication, newIndication), {
+    refetchOnWindowFocus: false,
+    enabled: false,
+  });
+
+  const { data: { data: dataCompanies } = {} } = useQuery(
+    "companies", () => getCompanies()
+  );
+
+  const { data: { data: dataContacts } = {}, refetch: refetchContacts } = useQuery("contacts", () => getCompanyContacts(selectedCompany), {
+    refetchOnWindowFocus: false,
+    enabled: false,
+  });
+
+  const { refetch: refetchNewContacts } = useQuery("newcontacts", () => postCompanyContacts(selectedCompany, newContact), {
+    refetchOnWindowFocus: false,
+    enabled: false,
+  });
+
+  const { refetch: refetchNewCompany } = useQuery("newcompany", () => postCompany(newCompany), {
+    refetchOnWindowFocus: false,
+    enabled: false,
+  });
+  /* #endregion */
+
+  /* #region  Functions and logics */
   const isSelected = (name) => (
     name === section
   )
+
+  const companyToIndicateOptions = []
+  let newIndication = {}
+  const inputRef = useRef<any>();
 
   const changeNewContact = (key, e) => {
     setNewContact({
@@ -52,26 +99,56 @@ export default function Home(props: any) {
     })
   }
 
-  const inputRef = useRef<any>();
+  const getSectorDescription = async (e) => {
+    const sector = dataSector.filter(sector => sector.sector_id == e.target.value)
 
-  useEffect(() => {
+    setSectorDescription(sector[0].description)
+    setSectorId(sector[0].sector_id)
+  }
 
-    if (inputRef.current) {
-      const endOfField = newIndication.description.length;
+  const selectCompanyToIndicate = (option) => {
+    setSelectedCompanyIndication(option.value)
+  }
 
-      inputRef.current.setSelectionRange(endOfField, endOfField);
-      inputRef.current.focus();
+  const includeDescription = ((e) => {
+    setindicateDescription(e.target.value)
+  })
+
+  const saveIndication = async () => {
+    newIndication = {
+      description: indicateDescription,
+      sectorId: sectorId,
+      userId: user.id,
     }
 
-  }, [newIndication])
+    refetchNewIndication()
+    clearIndication()
+  }
 
-  const changeNewIndication = (key, e) => {
-    e.preventDefault()
-    setNewIndication({
-      ...newIndication,
-      userId: user.id,
-      [key]: e.target.value
-    })
+  const clearIndication = () => {
+    newIndication = {
+      userId: 0,
+      description: "",
+      sectorId: undefined
+    }
+
+    setindicateDescription("")
+    setSelectedCompanyIndication(0)
+  }
+
+  const saveCompany = async () => {
+    await refetchNewCompany()
+    setCreateCompany(false)
+    await refetchCompanyIndication()
+    searchNewCompany()
+  }
+
+  const searchNewCompany = () => {
+
+    companyFilteredToIndication.map(c => console.log(c.label))
+
+    const company = companyFilteredToIndication.find(company => company.label == newCompany.name)
+    setSelectedCompanyIndication(company.value)
   }
 
   const changeNewCompany = (key, e) => {
@@ -82,64 +159,8 @@ export default function Home(props: any) {
     })
   }
 
-  const getSectorDescription = (key, e) => {
-    const sector = e.filter(item => item.sector_id == key)
-    const setorId = sector[0].sector_id;
-
-    setSetorDescription(sector[0].description)
-    btnAddCompanyState(setorId)
-    setSectorId(setorId)
-  }
-
-  const getCompanyName = (key) => {
-    setcompanyName(key)
-  }
-
-  const { data: { data: dataCompanies } = {} } = useQuery(
-    "companies", () => getCompanies()
-  );
-
-  const { data: { data: dataCompany } = {}, refetch: refetchCompany } = useQuery("company", () => getCompany(selectedCompany), {
-    refetchOnWindowFocus: false,
-    enabled: false,
-  });
-
-  const { data: { data: dataCompanyIndication } = {}, refetch: refetchCompanyIndication } = useQuery("companyIndication", () => getCompanyIndication(setorId), {
-    refetchOnWindowFocus: false,
-    enabled: false,
-  });
-
-  const { data: { data: dataContacts } = {}, refetch: refetchContacts } = useQuery("contacts", () => getCompanyContacts(selectedCompany), {
-    refetchOnWindowFocus: false,
-    enabled: false,
-  });
-
-  const { data: { data: dataSector } = {} } = useQuery(
-    "sectors",
-    getSector
-  );
-
-  const { refetch: refetchNewContacts } = useQuery("newcontacts", () => postCompanyContacts(selectedCompany, newContact), {
-    refetchOnWindowFocus: false,
-    enabled: false,
-  });
-
-  const { refetch: refetchNewIndication } = useQuery("newcontacts", () => postIndication(selectedCompanyIndication, newIndication), {
-    refetchOnWindowFocus: false,
-    enabled: false,
-  });
-
-  const { refetch: refetchNewCompany } = useQuery("newcompany", () => postCompany(newCompany), {
-    refetchOnWindowFocus: false,
-    enabled: false,
-  });
-
   const onRequestCompany = (e) => {
     setSelectedCompany(e.target.value)
-  }
-
-  const onRequestCompanyIndication = (e) => {
-    setSelectedCompanyIndication(e.target.value)
   }
 
   const btnAddCompanyState = (e) => {
@@ -150,43 +171,11 @@ export default function Home(props: any) {
     }
   }
 
-  useEffect(() => {
-    if (!selectedCompany) {
-      return
-    }
-
-    refetchCompany()
-    refetchContacts()
-  }, [selectedCompany])
-
-  useEffect(() => {
-    if (!selectedCompanyIndication) {
-      return
-    }
-
-    refetchCompanyIndication()
-  }, [selectedCompanyIndication])
-
   const saveContact = async () => {
     await refetchNewContacts()
     refetchContacts()
     setCreateContact(false)
     clearContact()
-  }
-
-  const saveCompany = async () => {
-    await refetchNewCompany()
-    setCreateCompany(false)
-    clearNewCompany()
-  }
-
-  const editCompany = async () => {
-
-  }
-
-  const saveIndication = async () => {
-    await refetchNewIndication()
-    clearIndication()
   }
 
   const clearContact = () => {
@@ -207,14 +196,43 @@ export default function Home(props: any) {
     })
   }
 
-  const clearIndication = () => {
-    setNewIndication({
-      userId: 0,
-      description: "",
-      sectorId: undefined
-    })
+  const getCompanyName = (key) => {
+    setcompanyName(key)
   }
+  /* #endregion */
 
+  /* #region  UseEfects */
+  useEffect(() => {
+    refetchCompanyIndication()
+    btnAddCompanyState(sectorId)
+    setSelectedCompanyIndication(0)
+  }, [sectorId])
+
+  useEffect(() => {
+    if (!dataCompanyIndication) return
+
+    dataCompanyIndication.map(company => {
+      companyToIndicateOptions.push({
+        value: company.company_id,
+        label: company.name
+      })
+
+      setCompanyFilteredToIndication(companyToIndicateOptions)
+    })
+
+  }, [dataCompanyIndication])
+
+  useEffect(() => {
+    if (inputRef.current) {
+      const endOfField = indicateDescription.length;
+
+      inputRef.current.setSelectionRange(endOfField, endOfField);
+      inputRef.current.focus();
+    }
+  }, [indicateDescription])
+  /* #endregion */
+
+  /* #region  Xhtml */
   const EmployerContent = () => {
     return (
       <S.EmployerContent>
@@ -297,52 +315,49 @@ export default function Home(props: any) {
     return (
       <S.IndicationContent>
         <Text color="#292d6e" mx='8px' mb="24px" variant="h1">Preencha as informações da inscrição</Text>
-        <>
-          <Text color="#292d6e" mx='8px' mb="8px" variant="h3">Nome da categoria</Text>
+
+        <Text color="#292d6e" mx='8px' mb="8px" variant="h3">Nome da categoria</Text>
+        <S.IndicationContentSelects>
+
+          <S.InputSelect name="Section" style={{ flex: 1 }} onChange={(e) => getSectorDescription(e)} value={sectorId} >
+            {dataSector?.length && dataSector.map(({ name, sector_id }) => (
+              <option value={sector_id}>{name}</option>
+            ))}
+          </S.InputSelect>
+
+        </S.IndicationContentSelects>
+        <Text color="#292d6e" mx='8px' mb="8px" variant="h3">Descrição da categoria</Text>
+        <S.InputTextArea key="categoryDescription" rows="8" value={sectorDescription} />
+
+        <Text color="#292d6e" mx='8px' mb="8px" variant="h3">Nome da empresa</Text>
+        <S.SelectEmpresas>
           <S.IndicationContentSelects>
-            <S.InputSelect name="Section" style={{ flex: 1 }} onChange={(e) => {
-              getSectorDescription(e.target.value, dataSector);
-              changeNewIndication('sectorId', e);
-              onRequestCompanyIndication(e)
-            }}
-              value={newIndication.description}
-            >
-              <option selected={true} disabled value={null}>Escolha a categoria</option>
-              {dataSector?.length && dataSector.map(({ name, sector_id }) => (
-                <option value={sector_id}>{name}</option>
-              ))}
-            </S.InputSelect>
-          </S.IndicationContentSelects>
-        </>
-        <>
-          <Text color="#292d6e" mx='8px' mb="8px" variant="h3">Descrição da categoria</Text>
-          <S.InputTextArea key="categoryDescription" rows="8" value={setorDescription} />
-        </>
-        <>
-          <Text color="#292d6e" mx='8px' mb="8px" variant="h3">Nome da empresa</Text>
-          <S.SelectEmpresas>
-            <S.IndicationContentSelects>
-              <S.InputSelect name="Company" style={{ flex: 1 }} onChange={onRequestCompanyIndication} value={selectedCompanyIndication}>
-                {dataCompanyIndication?.length && dataCompanyIndication.map(({ name, company_id }) => (
-                  <option value={company_id}>{name}</option>
-                ))}
-              </S.InputSelect>
-            </S.IndicationContentSelects>
+
+            <S.ReactSelectElement
+              multi={true}
+              classNamePrefix="Select"
+              options={companyFilteredToIndication}
+              onChange={(e) => selectCompanyToIndicate(e)}
+              defaultValue={
+                selectedCompanyIndication === 0 ? 0 : companyFilteredToIndication.find(company => company.value == String(selectedCompanyIndication))
+              }
+            />
+
             <S.AddCompanyButton disabled={!openToNewCompany} onClick={() => setCreateCompany(true)}>+</S.AddCompanyButton>
-          </S.SelectEmpresas>
-        </>
+
+          </S.IndicationContentSelects>
+        </S.SelectEmpresas>
         <>
           <Text key="incriptionDescription" color="#292d6e" mx='8px' mb="8px" variant="h3">Descrição da inscrição</Text>
           <S.InputTextArea
             ref={inputRef}
             rows="8"
             key="nameIndicationDescription"
-            value={newIndication.description}
-            onChange={(e) => changeNewIndication('description', e)}
+            value={indicateDescription}
+            onChange={(e) => includeDescription(e)}
           />
         </>
         <S.IndicationContentButton onClick={saveIndication}> Salvar indicação</S.IndicationContentButton>
-
       </S.IndicationContent>
 
     )
@@ -421,6 +436,7 @@ export default function Home(props: any) {
       </Modal>
     )
   }
+  /* #endregion */
 
 
   return (

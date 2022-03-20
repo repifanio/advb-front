@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { Wrapped } from '~/components';
 import logoUrl from '../../assets/logo-advb.png' 
+import Select from 'react-select';
 
 export default {
   Content: styled(Wrapped)`
@@ -133,7 +134,6 @@ export default {
   ExcelComponentLine: styled.div`
     display: flex;
     flex-direction: row;
-    // border: solid 1px black;
   `,
   ExcelExcelComponentItem: styled.div`
     display: flex;
@@ -141,7 +141,6 @@ export default {
     justify-content: center;
     background-color: white;
     margin: 1px;
-    // border-right: solid 1px black;
     flex: 1;
     padding: 4px 8px;
     &:last-of-type {
@@ -278,4 +277,44 @@ export default {
       cursor: default;
     }
   `,
+
+  ReactSelectElement: styled(Select)`
+  padding: 0px 0px;
+  width: 100%;
+  flex: 1;
+  padding-right: 5px;
+  margin-bottom: 16px;
+    .Select__control {
+      width: 100%;
+      border: 1px solid #808abc;
+      cursor: pointer;
+      color: #3e3e3e;
+      font-weight: 400;
+      outline: none;
+      border-radius: 4px;
+      height: 45px;      
+      margin: 0 8px 0px;
+    }
+
+    // .Select__control:hover {
+    //   width: 1505px;
+    //   border-color: #a1a1a1;
+    // }
+
+    // .Select__control--is-focused {
+    //   width: 1505px;
+    //   box-shadow: 0 0 0 1px black;
+    //   outline: none;
+    // }
+
+    // .Select__indicator-separator {
+    //   width: 1505px;
+    //   display: none;
+    // }
+
+    // .Select__menu {
+    //   width: 1505px;
+    //   color: #3c3d3e;
+    // }
+  `
 };
