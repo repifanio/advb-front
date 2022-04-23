@@ -15,6 +15,14 @@ export const  getCompanyIndication = async (setor_id): Promise<any> => {
   }
 };
 
+export const getCompanyToVote = async (setor_id): Promise<any> => {
+  try {
+    return await API.get(`/votation/${setor_id}`);
+  } catch (error) {
+    console.log('Error no request de companies');
+  }
+};
+
 export const getCompany = async ( company_id ): Promise<any> => {
   try {
     return await API.get(`/company/${company_id}`);
@@ -50,5 +58,17 @@ export const postCompany = async ( company ): Promise<any> => {
     return data;
   } catch (error) {
     alert("Infelizmente não foi possível registrar a empresa, verifique se ela já não consta na lista.")
+  }
+};
+
+export const verifyVoteOfUser = async ( company_id, setorId ): Promise<any> => {
+  try {
+    const existVote = await API.post(`/votation/validate`, {data: {companyId: company_id, setorId: setorId}});
+    if (existVote.data.data !== null) alert("Você já votou nessa empresa")
+
+    return existVote;
+
+  } catch (error) {
+    console.log('Error no request de company');
   }
 };

@@ -2,7 +2,7 @@ import { useQuery } from 'react-query';
 import {
   getCompanies, getCompany, getCompanyIndication,
   getCompanyContacts, getSector, postCompanyContacts,
-  postIndication, postCompany
+  postIndication, postCompany, getCompanyToVote, postVote, verifyVoteOfUser
 } from '~/utils';
 import Modal from 'react-modal';
 import { useUser } from '~/context'
@@ -25,15 +25,24 @@ export default function Home(props: any) {
     address: "",
     userId: 0,
   })
+  const [openToVote, setopenToVote] = useState(true)
   const [sectorId, setSectorId] = useState(0)
+  const [sectorIdToVote, setSectorIdToVote] = useState(0)
   const [sectorDescription, setSectorDescription] = useState("")
+  const [indicatedDescription, setIndicatedDescription] = useState("")
   const [companyFilteredToIndication, setCompanyFilteredToIndication] = useState([{
+    value: "",
+    label: ""
+  }])
+  const [companyFilteredToVote, setCompanyFilteredToVote] = useState([{
     value: "",
     label: ""
   }])
   const [indicateDescription, setindicateDescription] = useState("")
   const [selectedCompany, setSelectedCompany] = useState(undefined)
   const [selectedCompanyIndication, setSelectedCompanyIndication] = useState(undefined)
+  const [selectedCompanyVote, setSelectedCompanyVote] = useState(0)
+  const [note, setNote] = useState(5)
   const { user } = useUser()
   const [section, setSection] = useState("Employers");
   const [createContact, setCreateContact] = useState(false)
@@ -53,12 +62,23 @@ export default function Home(props: any) {
     enabled: false,
   });
 
+  const { data: { data: dataCompanyToVote } = {}, refetch: refetchCompanyToVote } = useQuery("companyToVote", async () => await getCompanyToVote(sectorIdToVote), {
+    refetchOnWindowFocus: true,
+    enabled: true,
+  });
+
+
   const { data: { data: dataSector } = {} } = useQuery(
     "sectors",
     getSector
   );
 
   const { refetch: refetchNewIndication } = useQuery("newindication", () => postIndication(selectedCompanyIndication, newIndication), {
+    refetchOnWindowFocus: false,
+    enabled: false,
+  });
+
+  const { refetch: refetchNewVote } = useQuery("newVote", () => postVote(newVote), {
     refetchOnWindowFocus: false,
     enabled: false,
   });
@@ -81,6 +101,12 @@ export default function Home(props: any) {
     refetchOnWindowFocus: false,
     enabled: false,
   });
+
+  const { refetch: refetchVoteOfUser } = useQuery("verifyVoteOfUser", async () => await verifyVoteOfUser(companyToVoteVar, sectorIdToVote), {
+    refetchOnWindowFocus: false,
+    enabled: false,
+  });
+
   /* #endregion */
 
   /* #region  Functions and logics */
@@ -89,7 +115,10 @@ export default function Home(props: any) {
   )
 
   const companyToIndicateOptions = []
+  const companyToVoteOptions = []
   let newIndication = {}
+  let newVote = {}
+  let companyToVoteVar = 0
   const inputRef = useRef<any>();
 
   const changeNewContact = (key, e) => {
@@ -106,8 +135,25 @@ export default function Home(props: any) {
     setSectorId(sector[0].sector_id)
   }
 
+  const getSectorDescriptionToVote = async (e) => {
+    const sector = dataSector.filter(sector => sector.sector_id == e.target.value)
+    setSectorIdToVote(sector[0].sector_id)
+  }
+
   const selectCompanyToIndicate = (option) => {
     setSelectedCompanyIndication(option.value)
+  }
+
+  const selectCompanyToVote = async (option) => {
+    setSelectedCompanyVote(option.value)
+
+    const indicationDescription = dataCompanyToVote.filter(indicates => indicates.companyId == option.value)
+    setIndicatedDescription(indicationDescription[0].description)
+    companyToVoteVar = option.value
+
+ 
+    const verifyIfVotedBefore = await refetchVoteOfUser()
+    setopenToVote(verifyIfVotedBefore.data.data.data === null ? true : false)
   }
 
   const includeDescription = ((e) => {
@@ -123,6 +169,18 @@ export default function Home(props: any) {
 
     refetchNewIndication()
     clearIndication()
+  }
+
+  const saveVote = async () => {
+    newVote = {
+      companyId: selectedCompanyVote,
+      sectorId: sectorIdToVote,
+      note: note
+    }
+
+    refetchNewVote()
+    setopenToVote(false)
+    // clearIndication()
   }
 
   const clearIndication = () => {
@@ -147,6 +205,12 @@ export default function Home(props: any) {
 
     companyFilteredToIndication.map(c => console.log(c.label))
 
+    const company = companyFilteredToIndication.find(company => company.label == newCompany.name)
+    setSelectedCompanyIndication(company.value)
+  }
+
+
+  const companiesToVote = () => {
     const company = companyFilteredToIndication.find(company => company.label == newCompany.name)
     setSelectedCompanyIndication(company.value)
   }
@@ -199,6 +263,11 @@ export default function Home(props: any) {
   const getCompanyName = (key) => {
     setcompanyName(key)
   }
+
+  const getToSetNote = (e) => {
+    setNote(e.target.value)
+  }
+
   /* #endregion */
 
   /* #region  UseEfects */
@@ -207,6 +276,10 @@ export default function Home(props: any) {
     btnAddCompanyState(sectorId)
     setSelectedCompanyIndication(0)
   }, [sectorId])
+
+  useEffect(() => {
+    refetchCompanyToVote()
+  }, [sectorIdToVote])
 
   useEffect(() => {
     if (!dataCompanyIndication) return
@@ -221,6 +294,20 @@ export default function Home(props: any) {
     })
 
   }, [dataCompanyIndication])
+
+  useEffect(() => {
+    if (!dataCompanyToVote) return
+
+    dataCompanyToVote.map(company => {
+      companyToVoteOptions.push({
+        value: company.companyId,
+        label: company.name
+      })
+
+      setCompanyFilteredToVote(companyToVoteOptions)
+    })
+
+  }, [dataCompanyToVote])
 
   useEffect(() => {
     if (inputRef.current) {
@@ -359,14 +446,60 @@ export default function Home(props: any) {
         </>
         <S.IndicationContentButton onClick={saveIndication}> Salvar indicação</S.IndicationContentButton>
       </S.IndicationContent>
-
     )
   }
 
   const VotationContent = () => {
-
     return (
-      null
+      <S.VotationContent>
+        <Text color="#292d6e" mx='8px' mb="24px" variant="h1">Indicações realizadas</Text>
+
+        <Text color="#292d6e" mx='8px' mb="8px" variant="h3">Nome da categoria</Text>
+        <S.IndicationContentSelects>
+          <S.InputSelect name="Section" style={{ flex: 1 }} onChange={(e) => getSectorDescriptionToVote(e)} value={sectorIdToVote} >
+            {dataSector?.length && dataSector.map(({ name, sector_id }) => (
+              <option value={sector_id}>{name}</option>
+            ))}
+          </S.InputSelect>
+        </S.IndicationContentSelects>
+
+        <Text color="#292d6e" mx='8px' mb="8px" variant="h3">Nome da empresa</Text>
+        <S.SelectEmpresas>
+          <S.IndicationContentSelects>
+            <S.ReactSelectElementVotation
+              multi={true}
+              classNamePrefix="Select"
+              options={companyFilteredToVote} 
+              defaultValue={
+                selectedCompanyVote === 0 ? 0 : companyFilteredToVote.find(company => company.value == String(selectedCompanyVote))
+              }
+              onChange={(e) => selectCompanyToVote(e)}
+            />
+          </S.IndicationContentSelects>
+        </S.SelectEmpresas>
+
+        <Text key="incriptionDescription" color="#292d6e" mx='8px' mb="8px" variant="h3">Descrição da inscrição</Text>
+        <S.InputTextArea key="categoryDescription" rows="8" value={indicatedDescription} />
+        
+        <Text key="incriptionDescription" color="#292d6e" mx='8px' mb="8px" variant="h3">Nota para a empresa</Text>
+        <S.RadioArea>
+          <S.RadioItem type="radio" value="1" name="noteValue" onChange={(e) => {getToSetNote(e)}} checked={1 == note ? true : false}/> 1
+          <S.RadioItem type="radio" value="2" name="noteValue" onChange={(e) => {getToSetNote(e)}} checked={2 == note ? true : false} /> 2
+          <S.RadioItem type="radio" value="3" name="noteValue" onChange={(e) => {getToSetNote(e)}} checked={3 == note ? true : false}/> 3
+          <S.RadioItem type="radio" value="4" name="noteValue" onChange={(e) => {getToSetNote(e)}} checked={4 == note ? true : false}/> 4
+          <S.RadioItem type="radio" value="5" name="noteValue" onChange={(e) => {getToSetNote(e)}} checked={5 == note ? true : false}/> 5
+          <S.RadioItem type="radio" value="6" name="noteValue" onChange={(e) => {getToSetNote(e)}} checked={6 == note ? true : false}/> 6
+          <S.RadioItem type="radio" value="7" name="noteValue" onChange={(e) => {getToSetNote(e)}} checked={7 == note ? true : false}/> 7
+          <S.RadioItem type="radio" value="8" name="noteValue" onChange={(e) => {getToSetNote(e)}} checked={8 == note ? true : false}/> 8
+          <S.RadioItem type="radio" value="9" name="noteValue" onChange={(e) => {getToSetNote(e)}} checked={9 == note ? true : false}/> 9
+          <S.RadioItem type="radio" value="10" name="noteValue" onChange={(e) => {getToSetNote(e)}} checked={10 == note ? true : false}/> 10
+        </S.RadioArea>
+        
+        <S.IndicationContentButton disabled={!openToVote} onClick={saveVote}> Salvar voto</S.IndicationContentButton>
+
+
+
+      </S.VotationContent>
     )
   }
 

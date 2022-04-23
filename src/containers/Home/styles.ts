@@ -152,6 +152,13 @@ export default {
     flex-direction: column;
     padding: 16px;
   `,
+  
+  VotationContent: styled.div`
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+  `,
+
   IndicationContentSelects: styled.div`
     display: flex;
     align-content: flex-start;
@@ -278,6 +285,26 @@ export default {
     }
   `,
 
+  ReactSelectElementVotation: styled(Select)`
+    padding: 0px 0px;
+    width: 100%;
+    flex: 1;
+    padding-right: 5px;
+    margin-bottom: 16px;
+      .Select__control {
+        width: 99.3%;
+        border: 1px solid #808abc;
+        cursor: pointer;
+        color: #3e3e3e;
+        font-weight: 400;
+        outline: none;
+        border-radius: 4px;
+        height: 45px;      
+        //margin: 0 8px 0px;
+        margin-left: 8px;
+      }
+  `,
+
   ReactSelectElement: styled(Select)`
   padding: 0px 0px;
   width: 100%;
@@ -316,5 +343,33 @@ export default {
     //   width: 1505px;
     //   color: #3c3d3e;
     // }
+  `,
+  RadioArea: styled.div`
+    display: flex;
+    align-content: flex-start;
+    flex-direction: row;
+    flex-wrap: wrap;  
+    width: 100%;
+    margin-left: 8px;
+    padding-bottom: 15px; 
+    color: #292d6e;
+    font-size: 13px;
+  `,
+  RadioItem: styled.input`
+    color: #3e3e3e;
+    //font-weight: 500;
+    //outline: none;
+    //border-radius: 4px;
+    //border: 1px solid #808abc;
+    padding: 13px 20px;
+    //height: fit-content;
+    //swidth: 100%;
+    //flex: 1;
+    //min-width: 200px;
+    margin-right: 4px;
+    margin-left: 16px;
   `
+
 };
+
+
