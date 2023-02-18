@@ -1,0 +1,9 @@
+{
+  "apps": [
+    {
+      "name": "advb-front",
+      "script": "npm",
+      "args": "run dev"
+    }
+  ]
+}
