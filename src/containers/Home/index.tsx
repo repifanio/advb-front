@@ -445,7 +445,7 @@ export default function Home(props: any) {
             onChange={(e) => includeDescription(e)}
           />
         </>
-        {/*<S.IndicationContentButton onClick={saveIndication}> Salvar indicação</S.IndicationContentButton>*/}
+        <S.IndicationContentButton onClick={saveIndication}> Salvar indicação</S.IndicationContentButton>
       </S.IndicationContent>
     )
   }
