@@ -49,6 +49,7 @@ export default function Home(props: any) {
   const [createCompany, setCreateCompany] = useState(false)
   const [openToNewCompany, setOpenToNewCompany] = useState(false)
   const [companyName, setcompanyName] = useState(0)
+  const [focusTextAreaIndication, setFocusTextAreaIndication] = useState(0)
   /* #endregion */
 
   /* #region  Calls to back */
@@ -157,6 +158,7 @@ export default function Home(props: any) {
   }
 
   const includeDescription = ((e) => {
+    setFocusTextAreaIndication(e.target.selectionStart)
     setindicateDescription(e.target.value)
   })
 
@@ -180,7 +182,7 @@ export default function Home(props: any) {
 
     refetchNewVote()
     setopenToVote(false)
-    // clearIndication()
+    clearIndication()
   }
 
   const clearIndication = () => {
@@ -311,10 +313,9 @@ export default function Home(props: any) {
 
   useEffect(() => {
     if (inputRef.current) {
-      const endOfField = indicateDescription.length;
-
-      inputRef.current.setSelectionRange(endOfField, endOfField);
+      inputRef.current.setSelectionRange(focusTextAreaIndication, focusTextAreaIndication);
       inputRef.current.focus();
+      inputRef.current.selectionEnd = focusTextAreaIndication
     }
   }, [indicateDescription])
   /* #endregion */
@@ -444,7 +445,7 @@ export default function Home(props: any) {
             onChange={(e) => includeDescription(e)}
           />
         </>
-        <S.IndicationContentButton onClick={saveIndication}> Salvar indicação</S.IndicationContentButton>
+        {/*<S.IndicationContentButton onClick={saveIndication}> Salvar indicação</S.IndicationContentButton>*/}
       </S.IndicationContent>
     )
   }

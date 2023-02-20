@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { Wrapped } from '~/components';
-import logoUrl from '../../assets/logo-advb.png' 
+import logoUrl from '../../assets/logo_advb.png'
 import Select from 'react-select';
 
 export default {
@@ -249,7 +249,7 @@ export default {
   Logo: styled.img.attrs({
     src: `${logoUrl}`
   })` 
-    margin-top: 20px;
+    margin-top:   55px;
     width: 350px;
     height: 350px;
   `,
