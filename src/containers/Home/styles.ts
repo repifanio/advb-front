@@ -126,6 +126,101 @@ export default {
       cursor: default;
     }
   `,
+
+  EmployerContentButtonAction: styled.button`
+    margin: 0 8px 2px;
+    background-color: #4054B2;
+    color: white;
+    text-decoration: none;    
+    border: none;
+    padding: 0 20px;    
+    height: 50px;
+    width: 50px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 25%;
+    flex: 1;
+    min-width: 80px;
+    font-weight: 700;
+    border-bottom: solid 1px #191D5E;
+    border-radius: 4px;
+    &:not([disabled]) {
+      cursor: pointer;
+      :hover {
+        background-color: #191D5E;
+        color: white;
+      }
+    }
+    &:disabled {
+      opacity: 0.3;
+      cursor: default;
+    }
+  `,
+
+  EmployerContentButtonActionGreen: styled.button`
+    margin: 0 8px 2px;
+    background-color: green;
+    color: white;
+    text-decoration: none;    
+    border: none;
+    padding: 0 20px;    
+    height: 50px;
+    width: 50px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 25%;
+    flex: 1;
+    min-width: 80px;
+    font-weight: 700;
+    border-bottom: solid 1px #191D5E;
+    border-radius: 4px;
+    &:not([disabled]) {
+      cursor: pointer;
+      :hover {
+        background-color: #191D5E;
+        color: white;
+      }
+    }
+    &:disabled {
+      opacity: 0.3;
+      cursor: default;
+    }
+  `,
+  EmployerContentButtonActionRed: styled.button`
+  margin: 0 8px 2px;
+  background-color: red;
+  color: white;
+  text-decoration: none;    
+  border: none;
+  padding: 0 20px;    
+  height: 50px;
+  width: 50px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 25%;
+  flex: 1;
+  min-width: 80px;
+  font-weight: 700;
+  border-bottom: solid 1px #191D5E;
+  border-radius: 4px;
+  &:not([disabled]) {
+    cursor: pointer;
+    :hover {
+      background-color: #191D5E;
+      color: white;
+    }
+  }
+  &:disabled {
+    opacity: 0.3;
+    cursor: default;
+  }
+`,
   ExcelComponent: styled.div`
     background-color: #808abc;
     border: solid 1px #808abc;
@@ -143,6 +238,19 @@ export default {
     margin: 1px;
     flex: 1;
     padding: 4px 8px;
+    &:last-of-type {
+      // border-right: none;
+    }
+  `,
+  ExcelExcelComponentItemStatus: styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    margin: 1px;
+    flex: 1;
+    padding: 4px 8px;
+    max-width: 100px;
     &:last-of-type {
       // border-right: none;
     }
@@ -186,6 +294,19 @@ export default {
     border: 1px solid #808abc;
     padding: 13px 20px;
     height: fit-content;
+    flex: 1;
+    min-width: 200px;
+    margin: 0 8px 16px;
+    resize: none;
+  `,
+  InputTextAreaEdit: styled.textarea`
+    color: #3e3e3e;
+    font-weight: 500;
+    outline: none;
+    border-radius: 4px;
+    border: 1px solid #808abc;
+    padding: 13px 20px;
+    // height: fit-content;
     flex: 1;
     min-width: 200px;
     margin: 0 8px 16px;

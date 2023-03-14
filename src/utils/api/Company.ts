@@ -40,6 +40,14 @@ export const getCompanyContacts = async ( company_id ): Promise<any> => {
   }
 };
 
+export const getIndications = async (): Promise<any> => {
+  try {
+    return await API.get(`/indication`);
+  } catch (error) {
+    console.log('Error no request de company');
+  }
+};
+
 export const postCompanyContacts = async ( companyId, contact ): Promise<any> => {
   try {
     const data =  await API.post(`/company/${companyId}/contacts`, {...contact, companyId: Number(companyId)} );    

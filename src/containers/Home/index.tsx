@@ -2,7 +2,8 @@ import { useQuery } from 'react-query';
 import {
   getCompanies, getCompany, getCompanyIndication,
   getCompanyContacts, getSector, postCompanyContacts,
-  postIndication, postCompany, getCompanyToVote, postVote, verifyVoteOfUser
+  postIndication, postCompany, getCompanyToVote, postVote, verifyVoteOfUser,
+  getIndications, editIndicationCall, editIndicationStatusCall
 } from '~/utils';
 import Modal from 'react-modal';
 import { useUser } from '~/context'
@@ -25,6 +26,10 @@ export default function Home(props: any) {
     address: "",
     userId: 0,
   })
+  const [editIndicationBody, setEditIndicationBody] = useState({
+    id: "",
+    description: "",
+  })
   const [openToVote, setopenToVote] = useState(true)
   const [sectorId, setSectorId] = useState(0)
   const [sectorIdToVote, setSectorIdToVote] = useState(0)
@@ -39,6 +44,7 @@ export default function Home(props: any) {
     label: ""
   }])
   const [indicateDescription, setindicateDescription] = useState("")
+  const [statusIndication, setStatusIndication] = useState("")
   const [selectedCompany, setSelectedCompany] = useState(undefined)
   const [selectedCompanyIndication, setSelectedCompanyIndication] = useState(undefined)
   const [selectedCompanyVote, setSelectedCompanyVote] = useState(0)
@@ -50,6 +56,8 @@ export default function Home(props: any) {
   const [openToNewCompany, setOpenToNewCompany] = useState(false)
   const [companyName, setcompanyName] = useState(0)
   const [focusTextAreaIndication, setFocusTextAreaIndication] = useState(0)
+  const [editIndication, setEditIndication] = useState(false)
+  const [idInidicationToEdit, setIdInidicationToEdit] = useState(0)
   /* #endregion */
 
   /* #region  Calls to back */
@@ -93,12 +101,26 @@ export default function Home(props: any) {
     enabled: false,
   });
 
+  const { data: { data: dataIndications } = {} } = useQuery(
+    "allIndications", () => getIndications()
+  );
+
   const { refetch: refetchNewContacts } = useQuery("newcontacts", () => postCompanyContacts(selectedCompany, newContact), {
     refetchOnWindowFocus: false,
     enabled: false,
   });
 
   const { refetch: refetchNewCompany } = useQuery("newcompany", () => postCompany(newCompany), {
+    refetchOnWindowFocus: false,
+    enabled: false,
+  });
+
+  const { refetch: refetchEditIndication } = useQuery("editIndication", () => editIndicationCall({id: idInidicationToEdit, description: indicateDescription}), {
+    refetchOnWindowFocus: false,
+    enabled: false,
+  });
+
+  const { refetch: refetchEditIndicationStatus } = useQuery("editIndicationStatus", () => editIndicationStatusCall({id: changeStatus.id, status: changeStatus.status}), {
     refetchOnWindowFocus: false,
     enabled: false,
   });
@@ -120,6 +142,7 @@ export default function Home(props: any) {
   let newIndication = {}
   let newVote = {}
   let companyToVoteVar = 0
+  let changeStatus:any = {}
   const inputRef = useRef<any>();
 
   const changeNewContact = (key, e) => {
@@ -203,6 +226,15 @@ export default function Home(props: any) {
     searchNewCompany()
   }
 
+  const editIndicationDescription = async () => {
+    await refetchEditIndication()
+  }
+
+  const editIndicationStatus = async () => {
+    await refetchEditIndicationStatus()
+  }
+
+
   const searchNewCompany = () => {
 
     companyFilteredToIndication.map(c => console.log(c.label))
@@ -243,6 +275,21 @@ export default function Home(props: any) {
     setCreateContact(false)
     clearContact()
   }
+
+  const sendDescriptionToEdit = async (description, idIndication) => {
+    setEditIndication(true)
+    setIdInidicationToEdit(idIndication)
+    setindicateDescription(description)
+  }
+
+  const alterStatusToIndication = async (status, idIndication) => {
+    changeStatus = {
+      id: idIndication,
+      status,
+    }
+    editIndicationStatus()
+  }
+  
 
   const clearContact = () => {
     setNewContact({
@@ -504,11 +551,114 @@ export default function Home(props: any) {
     )
   }
 
+  const MeIndicationsContent = () => {
+    return (
+      <S.VotationContent>
+        <Text color="#292d6e" mx='8px' mb="24px" variant="h1">Minhas inscrições</Text>
+        <ExcelComponentMeIndications />
+        {/* <Text color="#292d6e" mx='8px' mb="8px" variant="h3">Nome da categoria</Text>
+        <S.IndicationContentSelects>
+          <S.InputSelect name="Section" style={{ flex: 1 }} onChange={(e) => getSectorDescriptionToVote(e)} value={sectorIdToVote} >
+            {dataSector?.length && dataSector.map(({ name, sector_id }) => (
+              <option value={sector_id}>{name}</option>
+            ))}
+          </S.InputSelect>
+        </S.IndicationContentSelects>
+
+        <Text color="#292d6e" mx='8px' mb="8px" variant="h3">Nome da empresa</Text>
+        <S.SelectEmpresas>
+          <S.IndicationContentSelects>
+            <S.ReactSelectElementVotation
+              multi={true}
+              classNamePrefix="Select"
+              options={companyFilteredToVote} 
+              defaultValue={
+                selectedCompanyVote === 0 ? 0 : companyFilteredToVote.find(company => company.value == String(selectedCompanyVote))
+              }
+              onChange={(e) => selectCompanyToVote(e)}
+            />
+          </S.IndicationContentSelects>
+        </S.SelectEmpresas>
+
+        <Text key="incriptionDescription" color="#292d6e" mx='8px' mb="8px" variant="h3">Descrição da inscrição</Text>
+        <S.InputTextArea key="categoryDescription" rows="8" value={indicatedDescription} />
+        
+        <Text key="incriptionDescription" color="#292d6e" mx='8px' mb="8px" variant="h3">Nota para a empresa</Text>
+        <S.RadioArea>
+          <S.RadioItem type="radio" value="1" name="noteValue" onChange={(e) => {getToSetNote(e)}} checked={1 == note ? true : false}/> 1
+          <S.RadioItem type="radio" value="2" name="noteValue" onChange={(e) => {getToSetNote(e)}} checked={2 == note ? true : false} /> 2
+          <S.RadioItem type="radio" value="3" name="noteValue" onChange={(e) => {getToSetNote(e)}} checked={3 == note ? true : false}/> 3
+          <S.RadioItem type="radio" value="4" name="noteValue" onChange={(e) => {getToSetNote(e)}} checked={4 == note ? true : false}/> 4
+          <S.RadioItem type="radio" value="5" name="noteValue" onChange={(e) => {getToSetNote(e)}} checked={5 == note ? true : false}/> 5
+          <S.RadioItem type="radio" value="6" name="noteValue" onChange={(e) => {getToSetNote(e)}} checked={6 == note ? true : false}/> 6
+          <S.RadioItem type="radio" value="7" name="noteValue" onChange={(e) => {getToSetNote(e)}} checked={7 == note ? true : false}/> 7
+          <S.RadioItem type="radio" value="8" name="noteValue" onChange={(e) => {getToSetNote(e)}} checked={8 == note ? true : false}/> 8
+          <S.RadioItem type="radio" value="9" name="noteValue" onChange={(e) => {getToSetNote(e)}} checked={9 == note ? true : false}/> 9
+          <S.RadioItem type="radio" value="10" name="noteValue" onChange={(e) => {getToSetNote(e)}} checked={10 == note ? true : false}/> 10
+        </S.RadioArea>
+        
+        <S.IndicationContentButton disabled={!openToVote} onClick={saveVote}> Salvar voto</S.IndicationContentButton> */}
+
+
+
+      </S.VotationContent>
+    )
+  }
+
+  const ExcelComponentMeIndications = () => {
+    return (
+      <S.ExcelComponent>
+        <S.ExcelComponentLine>
+          {/* {['Setor', 'Empresa', 'Justificativa', 'status', 'Ações'].map((item) => (
+            <S.ExcelExcelComponentItem style={{ fontWeight: '700', color: '#292d6e' }}> {item} </S.ExcelExcelComponentItem>
+          ))} */}
+          <S.ExcelExcelComponentItem style={{ fontWeight: '700', color: '#292d6e' }}> Setor </S.ExcelExcelComponentItem>
+          <S.ExcelExcelComponentItem style={{ fontWeight: '700', color: '#292d6e' }}> Empresa </S.ExcelExcelComponentItem>
+          <S.ExcelExcelComponentItem style={{ fontWeight: '700', color: '#292d6e' }}> Justificava </S.ExcelExcelComponentItem>
+          <S.ExcelExcelComponentItemStatus style={{ fontWeight: '700', color: '#292d6e' }}> Status </S.ExcelExcelComponentItemStatus>
+          <S.ExcelExcelComponentItem style={{ fontWeight: '700', color: '#292d6e' }}> Ações </S.ExcelExcelComponentItem>
+        </S.ExcelComponentLine>
+
+        {dataIndications?.length ? (
+          dataIndications.map((item) => (
+            <S.ExcelComponentLine style={{ display: 'flex' }}>
+              <S.ExcelExcelComponentItem>{item.sector || 'Não informado'}</S.ExcelExcelComponentItem>
+              <S.ExcelExcelComponentItem>{item.company || 'Não informado'}</S.ExcelExcelComponentItem>
+              <S.ExcelExcelComponentItem>{item.description || 'Não informado'}</S.ExcelExcelComponentItem>
+              <S.ExcelExcelComponentItemStatus>{item.status === null ? 'null' : item.status }</S.ExcelExcelComponentItemStatus>
+              <S.ExcelExcelComponentItem>{
+              <>
+                <S.EmployerContentButtonAction onClick={() => sendDescriptionToEdit(item.description, item.id)}> Editar </S.EmployerContentButtonAction>
+                <S.EmployerContentButtonActionGreen onClick={() => alterStatusToIndication('Aprovada', item.id)}> Aprovar </S.EmployerContentButtonActionGreen>
+                <S.EmployerContentButtonActionRed onClick={() => alterStatusToIndication('Excluída', item.id)}> Excluir </S.EmployerContentButtonActionRed>
+              </>
+            }</S.ExcelExcelComponentItem> 
+            </S.ExcelComponentLine>
+          ))
+        ) : (
+          <S.ExcelComponentLine style={{ display: 'flex' }}>
+            <S.ExcelExcelComponentItem>Não informado</S.ExcelExcelComponentItem>
+            <S.ExcelExcelComponentItem>Não informado</S.ExcelExcelComponentItem>
+            <S.ExcelExcelComponentItem>Não informado</S.ExcelExcelComponentItem>
+            <S.ExcelExcelComponentItem>{
+              <>
+                <S.EmployerContentButtonAction> Editar </S.EmployerContentButtonAction>
+                <S.EmployerContentButtonAction> Aprovar </S.EmployerContentButtonAction>
+                <S.EmployerContentButtonAction> Excluir </S.EmployerContentButtonAction>
+              </>
+            }</S.ExcelExcelComponentItem> 
+          </S.ExcelComponentLine>
+        )}
+      </S.ExcelComponent>
+    )
+  }
+
   const RightContent = () => {
     const content = {
       Employers: EmployerContent,
       Indications: IndicationContent,
       Votations: VotationContent,
+      MeIndications:  MeIndicationsContent,
     }
 
     const RenderContent = content[section]
@@ -570,6 +720,38 @@ export default function Home(props: any) {
       </Modal>
     )
   }
+
+  const modalEditIntication = () => {
+    return (
+      <Modal
+        isOpen={editIndication}
+        onRequestClose={() => setEditIndication(false)}
+        style={{
+          overlay: {
+            backgroundColor: `rgba(0,0,0,0.7)`
+          },
+        }}
+        contentLabel="Example Modal"
+      >
+        <>
+          <S.ContactContent>
+            <Text key="incriptionDescription" color="#292d6e" mx='8px' mb="8px" variant="h3">Descrição da inscrição</Text>
+            <S.ContactContentInputs>
+              <S.InputTextAreaEdit
+                ref={inputRef}
+                rows="8"
+                key="nameIndicationDescription"
+                value={indicateDescription}
+                onChange={(e) => includeDescription(e)}
+              />
+            </S.ContactContentInputs>
+            <S.ContactContentButton onClick={editIndicationDescription}> Editar Indicação</S.ContactContentButton>
+          </S.ContactContent>
+        </>
+      </Modal>
+    )
+  }
+
   /* #endregion */
 
 
@@ -583,10 +765,12 @@ export default function Home(props: any) {
         <S.LeftButton isSelected={isSelected('Employers')} onClick={() => setSection('Employers')}> Empresas </S.LeftButton>
         <S.LeftButton isSelected={isSelected('Indications')} onClick={() => setSection('Indications')}> Inscrição </S.LeftButton>
         <S.LeftButton isSelected={isSelected('Votations')} onClick={() => setSection('Votations')}> Votação </S.LeftButton>
+        <S.LeftButton isSelected={isSelected('MeIndications')} onClick={() => setSection('MeIndications')}> Minhas Inscrições </S.LeftButton>
       </S.Left>
       <RightContent />
       {modalContent()}
       {modalNewCompany()}
+      {modalEditIntication()}
     </S.Content>
   )
 }
