@@ -609,9 +609,6 @@ export default function Home(props: any) {
     return (
       <S.ExcelComponent>
         <S.ExcelComponentLine>
-          {/* {['Setor', 'Empresa', 'Justificativa', 'status', 'Ações'].map((item) => (
-            <S.ExcelExcelComponentItem style={{ fontWeight: '700', color: '#292d6e' }}> {item} </S.ExcelExcelComponentItem>
-          ))} */}
           <S.ExcelExcelComponentItem style={{ fontWeight: '700', color: '#292d6e' }}> Setor </S.ExcelExcelComponentItem>
           <S.ExcelExcelComponentItem style={{ fontWeight: '700', color: '#292d6e' }}> Empresa </S.ExcelExcelComponentItem>
           <S.ExcelExcelComponentItem style={{ fontWeight: '700', color: '#292d6e' }}> Justificava </S.ExcelExcelComponentItem>
@@ -640,6 +637,7 @@ export default function Home(props: any) {
             <S.ExcelExcelComponentItem>Não informado</S.ExcelExcelComponentItem>
             <S.ExcelExcelComponentItem>Não informado</S.ExcelExcelComponentItem>
             <S.ExcelExcelComponentItem>Não informado</S.ExcelExcelComponentItem>
+            <S.ExcelExcelComponentItemStatus>Indefinido</S.ExcelExcelComponentItemStatus>
             <S.ExcelExcelComponentItem>{
               <>
                 <S.EmployerContentButtonAction> Editar </S.EmployerContentButtonAction>
