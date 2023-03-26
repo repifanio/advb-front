@@ -663,6 +663,10 @@ export default function Home(props: any) {
 
     return (
       <S.Right>
+        <S.HeaderContent>
+          <S.Logo></S.Logo>
+        </S.HeaderContent>
+        {/* <Text textAlign="center" color="#292d6e" variant="h1">50º Prêmio Exportação RS</Text> */}
         <RenderContent />
       </S.Right>
     )
@@ -712,6 +716,8 @@ export default function Home(props: any) {
             <S.Input key="nameCompany" placeholder="Nome" value={newCompany.name} onChange={(e) => changeNewCompany('name', e)} />
             <S.Input key="documentCompany" placeholder="Documento" value={newCompany.document} onChange={(e) => changeNewCompany('document', e)} />
             <S.Input key="addressCompany" placeholder="Endereço" value={newCompany.address} onChange={(e) => changeNewCompany('address', e)} />
+            <S.Input key="documentCompany" placeholder="Documento" value={newCompany.document} onChange={(e) => changeNewCompany('document', e)} />
+            <S.Input key="addressCompany" placeholder="Endereço" value={newCompany.address} onChange={(e) => changeNewCompany('address', e)} />
           </S.ContactContentInputs>
           <S.ContactContentButton onClick={saveCompany}> Salvar Empresa</S.ContactContentButton>
         </S.ContactContent>
@@ -754,21 +760,19 @@ export default function Home(props: any) {
 
 
   return (
-    <S.Content justifyContent="center">
-      <S.Header>
-        <S.Logo ></S.Logo>
-        {/* <Text textAlign="center" color="#292d6e" variant="h1">50º Prêmio Exportação RS</Text> */}
-      </S.Header>
-      <S.Left>
-        <S.LeftButton isSelected={isSelected('Employers')} onClick={() => setSection('Employers')}> Empresas </S.LeftButton>
-        <S.LeftButton isSelected={isSelected('Indications')} onClick={() => setSection('Indications')}> Inscrição </S.LeftButton>
-        <S.LeftButton isSelected={isSelected('Votations')} onClick={() => setSection('Votations')}> Votação </S.LeftButton>
-        <S.LeftButton isSelected={isSelected('MeIndications')} onClick={() => setSection('MeIndications')}> Minhas Inscrições </S.LeftButton>
-      </S.Left>
-      <RightContent />
-      {modalContent()}
-      {modalNewCompany()}
-      {modalEditIntication()}
-    </S.Content>
+    <>
+      <S.Content>
+        <S.Left>
+          <S.LeftButton isSelected={isSelected('Employers')} onClick={() => setSection('Employers')}> Empresas </S.LeftButton>
+          <S.LeftButton isSelected={isSelected('Indications')} onClick={() => setSection('Indications')}> Inscrição </S.LeftButton>
+          <S.LeftButton isSelected={isSelected('Votations')} onClick={() => setSection('Votations')}> Votação </S.LeftButton>
+          <S.LeftButton isSelected={isSelected('MeIndications')} onClick={() => setSection('MeIndications')}> Minhas Inscrições </S.LeftButton>
+        </S.Left>
+        <RightContent />
+        {modalContent()}
+        {modalNewCompany()}
+        {modalEditIntication()}
+      </S.Content>
+    </>
   )
 }

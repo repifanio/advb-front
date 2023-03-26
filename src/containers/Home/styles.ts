@@ -11,7 +11,7 @@ export default {
     display: flex;
     flex: 1;
     //background-color: #444;
-    padding-top: 80px;
+    padding-top: 20px;
     width: 100%;
   `,
   Left: styled.div`
@@ -370,9 +370,12 @@ export default {
   Logo: styled.img.attrs({
     src: `${logoUrl}`
   })` 
-    margin-top:   55px;
-    width: 350px;
-    height: 350px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 0px;
+    height: auto;
+    max-width: 20%;
   `,
 
   SelectEmpresas: styled.div`
@@ -489,8 +492,14 @@ export default {
     //min-width: 200px;
     margin-right: 4px;
     margin-left: 16px;
-  `
+  `,
 
+  HeaderContent: styled.div`
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+  `,
 };
+
 
 
