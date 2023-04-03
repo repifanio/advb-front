@@ -108,7 +108,7 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100%;
+    width: 50%;
     flex: 1;
     min-width: 200px;
     font-weight: 700;
@@ -136,11 +136,12 @@ export default {
     padding: 0 20px;    
     height: 50px;
     width: 50px;
+    max-height: 50px;
     font-weight: 500;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 25%;
+    width: 50%;
     flex: 1;
     min-width: 80px;
     font-weight: 700;
@@ -167,12 +168,13 @@ export default {
     border: none;
     padding: 0 20px;    
     height: 50px;
+    max-height: 50px;
     width: 50px;
     font-weight: 500;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 25%;
+    width: 50%;
     flex: 1;
     min-width: 80px;
     font-weight: 700;
@@ -198,12 +200,13 @@ export default {
   border: none;
   padding: 0 20px;    
   height: 50px;
+  max-height: 50px;
   width: 50px;
   font-weight: 500;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 25%;
+  width: 50%;
   flex: 1;
   min-width: 80px;
   font-weight: 700;
@@ -232,16 +235,18 @@ export default {
   `,
   ExcelExcelComponentItem: styled.div`
     display: flex;
+    flex-direction: column;
+    flex: 1;
     align-items: center;
     justify-content: center;
     background-color: white;
     margin: 1px;
-    flex: 1;
     padding: 4px 8px;
     &:last-of-type {
       // border-right: none;
     }
   `,
+  
   ExcelExcelComponentItemStatus: styled.div`
     display: flex;
     align-items: center;
@@ -341,11 +346,12 @@ export default {
     display: flex;
     flex-direction: column;
     padding: 16px;
+    width: 100%
   `,
   ContactContentInputs: styled.div`
     display: flex;
     align-content: flex-start;
-    flex-direction: row;
+    flex-direction: column;
     flex-wrap: wrap;    
   `,
   ContactContentButton: styled.button`

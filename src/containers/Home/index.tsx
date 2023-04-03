@@ -25,6 +25,10 @@ export default function Home(props: any) {
     document: "",
     address: "",
     userId: 0,
+    contact: "",
+    email: "",
+    phone: "",
+    function: ""
   })
   const [editIndicationBody, setEditIndicationBody] = useState({
     id: "",
@@ -478,7 +482,7 @@ export default function Home(props: any) {
               }
             />
 
-            <S.AddCompanyButton disabled={!openToNewCompany} onClick={() => setCreateCompany(true)}>+</S.AddCompanyButton>
+            <S.AddCompanyButton  onClick={() => setCreateCompany(true)}>+</S.AddCompanyButton>
 
           </S.IndicationContentSelects>
         </S.SelectEmpresas>
@@ -705,8 +709,15 @@ export default function Home(props: any) {
         onRequestClose={() => setCreateCompany(false)}
         style={{
           overlay: {
-            backgroundColor: `rgba(0,0,0,0.7)`
+            backgroundColor: `rgba(0,0,0,0.7)`,
+            width: `70%`,
+            height: '80%',
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
           },
+          
         }}
         contentLabel="Example Modal"
       >
@@ -716,8 +727,10 @@ export default function Home(props: any) {
             <S.Input key="nameCompany" placeholder="Nome" value={newCompany.name} onChange={(e) => changeNewCompany('name', e)} />
             <S.Input key="documentCompany" placeholder="Documento" value={newCompany.document} onChange={(e) => changeNewCompany('document', e)} />
             <S.Input key="addressCompany" placeholder="Endereço" value={newCompany.address} onChange={(e) => changeNewCompany('address', e)} />
-            <S.Input key="documentCompany" placeholder="Documento" value={newCompany.document} onChange={(e) => changeNewCompany('document', e)} />
-            <S.Input key="addressCompany" placeholder="Endereço" value={newCompany.address} onChange={(e) => changeNewCompany('address', e)} />
+            <S.Input key="contactCompany" placeholder="Nome do Contato" value={newCompany.contact} onChange={(e) => changeNewCompany('contact', e)} />
+            <S.Input key="emailCompany" placeholder="Email do Contato" value={newCompany.email} onChange={(e) => changeNewCompany('email', e)} />
+            <S.Input key="phoneCompany" placeholder="Telefone do Contato" value={newCompany.phone} onChange={(e) => changeNewCompany('phone', e)} />
+            <S.Input key="functionCompany" placeholder="Cargo do Contato" value={newCompany.function} onChange={(e) => changeNewCompany('function', e)} />
           </S.ContactContentInputs>
           <S.ContactContentButton onClick={saveCompany}> Salvar Empresa</S.ContactContentButton>
         </S.ContactContent>
@@ -763,9 +776,9 @@ export default function Home(props: any) {
     <>
       <S.Content>
         <S.Left>
-          <S.LeftButton isSelected={isSelected('Employers')} onClick={() => setSection('Employers')}> Empresas </S.LeftButton>
+          {/* <S.LeftButton isSelected={isSelected('Employers')} onClick={() => setSection('Employers')}> Empresas </S.LeftButton> */}
           <S.LeftButton isSelected={isSelected('Indications')} onClick={() => setSection('Indications')}> Inscrição </S.LeftButton>
-          <S.LeftButton isSelected={isSelected('Votations')} onClick={() => setSection('Votations')}> Votação </S.LeftButton>
+          {/* <S.LeftButton isSelected={isSelected('Votations')} onClick={() => setSection('Votations')}> Votação </S.LeftButton> */}
           <S.LeftButton isSelected={isSelected('MeIndications')} onClick={() => setSection('MeIndications')}> Minhas Inscrições </S.LeftButton>
         </S.Left>
         <RightContent />
