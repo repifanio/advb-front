@@ -302,7 +302,8 @@ export default {
     flex: 1;
     min-width: 200px;
     margin: 0 8px 16px;
-    resize: none;
+    // resize: none;
+    display: inline-block;
   `,
   InputTextAreaEdit: styled.textarea`
     color: #3e3e3e;

@@ -54,7 +54,7 @@ export default function Home(props: any) {
   const [selectedCompanyVote, setSelectedCompanyVote] = useState(0)
   const [note, setNote] = useState(5)
   const { user } = useUser()
-  const [section, setSection] = useState("Employers");
+  const [section, setSection] = useState("Indications");
   const [createContact, setCreateContact] = useState(false)
   const [createCompany, setCreateCompany] = useState(false)
   const [openToNewCompany, setOpenToNewCompany] = useState(false)
@@ -371,6 +371,8 @@ export default function Home(props: any) {
   }, [indicateDescription])
   /* #endregion */
 
+
+
   /* #region  Xhtml */
   const EmployerContent = () => {
     return (
@@ -453,7 +455,7 @@ export default function Home(props: any) {
   const IndicationContent = () => {
     return (
       <S.IndicationContent>
-        <Text color="#292d6e" mx='8px' mb="24px" variant="h1">Preencha as informações da inscrição</Text>
+        <Text color="#292d6e" mx='8px' mb="24px" variant="h1">Preencha a sua indicação</Text>
 
         <Text color="#292d6e" mx='8px' mb="8px" variant="h3">Nome da categoria</Text>
         <S.IndicationContentSelects>
@@ -466,7 +468,10 @@ export default function Home(props: any) {
 
         </S.IndicationContentSelects>
         <Text color="#292d6e" mx='8px' mb="8px" variant="h3">Descrição da categoria</Text>
-        <S.InputTextArea key="categoryDescription" rows="8" value={sectorDescription} />
+        <S.InputTextArea key="categoryDescription" value={sectorDescription}  rows="3"  />
+
+       
+
 
         <Text color="#292d6e" mx='8px' mb="8px" variant="h3">Nome da empresa</Text>
         <S.SelectEmpresas>
@@ -478,7 +483,7 @@ export default function Home(props: any) {
               options={companyFilteredToIndication}
               onChange={(e) => selectCompanyToIndicate(e)}
               defaultValue={
-                selectedCompanyIndication === 0 ? 0 : companyFilteredToIndication.find(company => company.value == String(selectedCompanyIndication))
+                selectedCompanyIndication === 0 ? {value: "0", label: "Escolha ou insira"} : companyFilteredToIndication.find(company => company.value == String(selectedCompanyIndication))
               }
             />
 
@@ -725,8 +730,8 @@ export default function Home(props: any) {
           <Text color="#292d6e" mx='8px' mb="24px" variant="h1">Preencha as informações da empresa</Text>
           <S.ContactContentInputs>
             <S.Input key="nameCompany" placeholder="Nome" value={newCompany.name} onChange={(e) => changeNewCompany('name', e)} />
-            <S.Input key="documentCompany" placeholder="Documento" value={newCompany.document} onChange={(e) => changeNewCompany('document', e)} />
-            <S.Input key="addressCompany" placeholder="Endereço" value={newCompany.address} onChange={(e) => changeNewCompany('address', e)} />
+            <S.Input key="documentCompany" placeholder="CNPJ" value={newCompany.document} onChange={(e) => changeNewCompany('document', e)} />
+            <S.Input key="addressCompany" placeholder="C" value={newCompany.address} onChange={(e) => changeNewCompany('address', e)} />
             <S.Input key="contactCompany" placeholder="Nome do Contato" value={newCompany.contact} onChange={(e) => changeNewCompany('contact', e)} />
             <S.Input key="emailCompany" placeholder="Email do Contato" value={newCompany.email} onChange={(e) => changeNewCompany('email', e)} />
             <S.Input key="phoneCompany" placeholder="Telefone do Contato" value={newCompany.phone} onChange={(e) => changeNewCompany('phone', e)} />

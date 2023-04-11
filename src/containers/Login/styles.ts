@@ -30,6 +30,7 @@ export default {
     border-radius: 4px;
     box-shadow: 0 1px 4px rgb(0 0 0 / 5%), 0 4px 16px rgb(0 0 0 / 6%);
     padding: 36px 50px;
+    margin-top: 10%;
   `,
   Input: styled.input`
     color: #3e3e3e;
